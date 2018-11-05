@@ -1,21 +1,35 @@
 package org.homieiot.device
 
+import org.homieiot.mqtt.HierarchicalHomiePublisher
+import org.homieiot.mqtt.HomiePublisher
 
-import org.homieiot.mqtt.MqttMessage
 
-class HomieNode(val id: String, val name: String = id, val type: String) : HomieMessage {
+class HomieNode(val id: String, val name: String = id, val type: String, parentPublisher: HomiePublisher) : HomieUnit {
     private val properties = arrayListOf<HomieProperty<*>>()
-    override fun toHomieMessages(): List<MqttMessage> {
 
-        return listOf(
-                MqttMessage(id, "\$name", payload = name),
-                MqttMessage(id, "\$type", payload = type),
-                MqttMessage(id, "\$properties", payload = properties.joinToString(separator = ",") { it.id })
-        )
+    private val publisher = HierarchicalHomiePublisher(parentPublisher, id)
+
+    private fun addProperty(property: HomieProperty<*>) {
+        properties += property
+        publishProperties()
     }
 
-    fun string(id: String, name: String? = null, settable: Boolean = false, unit: String? = null, value: String?) = properties.add(StringProperty(id, name, settable, unit, value))
+    override fun publishConfig() {
+        publisher.publishMessage("name".homieAttribute(), payload = name)
+        publisher.publishMessage("type".homieAttribute(), payload = type)
+        publishProperties()
+    }
 
-    fun int(id: String, name: String? = null, settable: Boolean = false, unit: String? = null, range: IntRange? = null, value: Int?) = properties.add(IntProperty(id, name, settable, unit, range, value))
+    private fun publishProperties() {
+        publisher.publishMessage("properties".homieAttribute(), payload = properties.joinToString(separator = ",") { it.id })
+    }
+
+    fun string(id: String, name: String? = null, retained: Boolean = true, unit: String? = null) {
+        addProperty(StringProperty(id = id, name = name, retained = retained, parentPublisher = this.publisher, unit = unit))
+    }
+
+    fun int(id: String, name: String? = null, retained: Boolean = true, unit: String? = null, range: IntRange? = null) {
+        addProperty(IntProperty(id = id, name = name, retained = retained, unit = unit, parentPublisher = this.publisher, range = range))
+    }
 
 }
