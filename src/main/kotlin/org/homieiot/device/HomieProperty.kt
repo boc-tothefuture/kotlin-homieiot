@@ -74,7 +74,6 @@ abstract class BaseHomieProperty<T>(override val id: String,
 
 }
 
-typealias StringPropertyUpdate = PropertyUpdate<String>
 
 class StringProperty(id: String,
                      name: String? = null,
@@ -90,7 +89,6 @@ class StringProperty(id: String,
         format = null) {
 }
 
-typealias NumberPropertyUpdate = PropertyUpdate<Long>
 
 class NumberProperty(id: String,
                      name: String?,
@@ -108,8 +106,33 @@ class NumberProperty(id: String,
 
 
 ) {
-
     override fun update(t: Long) {
+        range?.let { if (!it.contains(t)) throw IllegalArgumentException("Supplied value ($t) for update is out of range ($range)") }
+        super.update(t)
+    }
+}
+
+//fun DoubleRange(start: Double, end: Double): ClosedFloatingPointRange<Double> = start.rangeTo(end)
+
+
+class FloatProperty(id: String,
+                    name: String?,
+                    parentPublisher: HomiePublisher,
+                    retained: Boolean = true,
+                    unit: String? = null,
+                    private val range: ClosedFloatingPointRange<Double>?) : BaseHomieProperty<Double>(
+
+        id = id,
+        name = name,
+        retained = retained,
+        unit = unit,
+        parentPublisher = parentPublisher,
+        datatype = "float",
+        format = range?.let { "${it.start}:${it.endInclusive}" }
+
+
+) {
+    override fun update(t: Double) {
         range?.let { if (!it.contains(t)) throw IllegalArgumentException("Supplied value ($t) for update is out of range ($range)") }
         super.update(t)
     }
@@ -132,7 +155,6 @@ class EnumProperty<E : Enum<E>>(id: String,
         format = enumValues.joinToString(",")
 )
 
-typealias BoolPropertyUpdate = PropertyUpdate<Boolean>
 
 class BoolProperty(id: String,
                    name: String?,

@@ -47,6 +47,16 @@ class HomieNode(val id: String, val name: String = id, val type: String, parentP
         addProperty(NumberProperty(id = id, name = name, retained = retained, unit = unit, parentPublisher = this.publisher, range = range), init)
     }
 
+    fun float(id: String,
+              name: String? = null,
+              retained: Boolean = true,
+              unit: String? = null,
+              range: ClosedFloatingPointRange<Double>? = null,
+              init: ((HomieProperty<Double>.() -> Unit)) = {}) {
+        addProperty(FloatProperty(id = id, name = name, retained = retained, unit = unit, parentPublisher = this.publisher, range = range), init)
+    }
+
+
     fun bool(id: String,
              name: String? = null,
              retained: Boolean = true,

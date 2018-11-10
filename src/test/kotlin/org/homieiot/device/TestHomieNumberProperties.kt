@@ -20,7 +20,6 @@ class TestHomieNumberProperties {
         ))
     }
 
-
     @Test
     fun `Test Data Type Projection`() {
 
