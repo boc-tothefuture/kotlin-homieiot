@@ -41,6 +41,24 @@ internal class PublisherFake {
 
 }
 
+internal class NodeFake {
+
+    private val mqttMock = MqttPublisherMock()
+
+    internal val publishedMessages = mqttMock.publishedMessages
+
+    internal fun node(): HomieNode {
+        var node: HomieNode? = null
+        val device = device(id = "device", name = "foo") {
+            node = node(id = "node", name = "bar", type = "test") {}
+        }
+        device.publisher.mqttPublisher = mqttMock.mqttPublisher
+
+        return node!!
+    }
+
+}
+
 
 internal fun messageFor(vararg segments: String, payload: String): MqttMessage = MqttMessage(segments.toList(), payload)
 

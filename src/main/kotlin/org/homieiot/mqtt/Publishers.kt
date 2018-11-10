@@ -1,5 +1,7 @@
 package org.homieiot.mqtt
 
+import mu.KotlinLogging
+
 
 interface HomiePublisher {
 
@@ -22,10 +24,16 @@ internal class HierarchicalHomiePublisher(private val parent: HomiePublisher, pr
 
 internal class RootHomiePublisher(private val topicParts: List<String>) : HomiePublisher {
 
-    var mqttPublisher: MqttPublisher? = null
+    val logger = KotlinLogging.logger {}
+
+    var mqttPublisher: MqttPublisher = object : MqttPublisher {
+        override fun publishMessage(message: MqttMessage) {
+            logger.warn { "Message (${message.payload}) published on topic (${message.topic}) without connected MqttClient" }
+        }
+    }
 
     override fun publishMessage(topicSegments: List<String>?, payload: String) {
-        mqttPublisher?.let { it.publishMessage(MqttMessage(this.topicParts + topicSegments.orEmpty(), payload)) }
+        mqttPublisher.publishMessage(MqttMessage(this.topicParts + topicSegments.orEmpty(), payload))
     }
 }
 

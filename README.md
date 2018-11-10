@@ -3,7 +3,7 @@
 This is a work in progress kotlin client implementation of the [homie protocol.](https://git.io/homieiot)
 
 # Example
-The goal is to provide a kotlin-dsl to support the homieiot protocol.
+This library provides a kotlin-dsl to support the homieiot protocol.
 
 ```
 device(id = "hello-world") {

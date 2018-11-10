@@ -1,52 +1,110 @@
 package org.homieiot.device
 
-import io.mockk.mockk
 import org.assertj.core.api.Assertions
-import org.homieiot.mqtt.HomiePublisher
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class TestHomieProperties {
 
-    @Test
-    fun `Test String Property Without Value`() {
-
+    private class TestPropertyGroup(retained: Boolean = true, format: String? = null, unit: String? = null) {
         val publisherMock = PublisherFake()
 
-        val property = StringProperty(id = "foo", name = "bar", parentPublisher = publisherMock.publisher)
+        val property: BaseHomieProperty<Any> = object : BaseHomieProperty<Any>(id = "foo",
+                name = "bar",
+                parentPublisher = publisherMock.publisher,
+                unit = unit,
+                datatype = "any",
+                retained = retained,
+                format = format) {
+        }
 
-        property.publishConfig()
+        val messagePairs = publisherMock.messagePairs
+    }
 
-        Assertions.assertThat(publisherMock.messagePairs).containsExactlyElementsOf(listOf(
+    @Test
+    fun `Test Property Config`() {
+
+        val propertyGroup = TestPropertyGroup()
+
+        propertyGroup.property.publishConfig()
+
+        Assertions.assertThat(propertyGroup.messagePairs).containsExactlyElementsOf(listOf(
                 "foo/\$name" to "bar",
                 "foo/\$settable" to "false",
                 "foo/\$retained" to "true",
-                "foo/\$datatype" to "string"
+                "foo/\$datatype" to "any"
         ))
     }
 
-
     @Test
-    fun `Test Message Publication`() {
+    fun `Test Message Publication and Subscription`() {
 
-        var messageReceived: String? = null
+        var messageReceived: Any? = null
 
-        val prop = StringProperty(id = "foo", name = "bar", observer = { messageReceived = it.update }, parentPublisher = mockk<HomiePublisher>())
+        val propertyGroup = TestPropertyGroup()
+        propertyGroup.property.subscribe { messageReceived = it.update }
 
         val message = "Hello, World"
-        prop.mqttPublish(message)
-        Assertions.assertThat(messageReceived).isNotNull().isEqualTo(message)
-
+        propertyGroup.property.mqttReceived(message)
+        assertThat(messageReceived).isNotNull().isEqualTo(message)
     }
 
 
     @Test
     fun `Test Value Update`() {
 
-        val publisher = PublisherFake()
+        val propertyGroup = TestPropertyGroup()
 
-        val prop = StringProperty(id = "foo", name = "bar", parentPublisher = publisher.publisher)
-        prop.updateValue("baz")
-        Assertions.assertThat(publisher.messagePairs).hasSize(1).last().isEqualTo("foo" to "baz")
+        propertyGroup.property.update("baz")
+        assertThat(propertyGroup.messagePairs).hasSize(1).last().isEqualTo("foo" to "baz")
+    }
+
+    @Test
+    fun `Test Settable`() {
+        val propertyGroup = TestPropertyGroup()
+        propertyGroup.property.publishConfig()
+
+        assertThat(propertyGroup.messagePairs).doesNotContain("foo/\$settable" to "true")
+
+        propertyGroup.property.subscribe { }
+
+        assertThat(propertyGroup.messagePairs).contains("foo/\$settable" to "true")
+    }
+
+    @Test
+    fun `Test Retained`() {
+        val propertyGroup = TestPropertyGroup(retained = false)
+
+        propertyGroup.property.publishConfig()
+
+        assertThat(propertyGroup.messagePairs).doesNotContain("foo/\$retained" to "true")
+        assertThat(propertyGroup.messagePairs).contains("foo/\$retained" to "false")
+    }
+
+    @Test
+    fun `Test Update Only On Change`() {
+        val propertyGroup = TestPropertyGroup()
+
+        propertyGroup.property.update("baz")
+        assertThat(propertyGroup.messagePairs).hasSize(1).last().isEqualTo("foo" to "baz")
+        propertyGroup.property.update("baz")
+        assertThat(propertyGroup.messagePairs).hasSize(1)
+    }
+
+    @Test
+    fun `Test Unit`() {
+        val propertyGroup = TestPropertyGroup(unit = "foo")
+        propertyGroup.property.publishConfig()
+        assertThat(propertyGroup.messagePairs).contains("foo/\$unit" to "foo")
+    }
+
+    @Test
+    fun `Test Format`() {
+        val propertyGroup = TestPropertyGroup(format = "foo")
+        propertyGroup.property.publishConfig()
+        assertThat(propertyGroup.messagePairs).contains("foo/\$format" to "foo")
     }
 
 }
+
+
