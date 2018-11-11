@@ -90,29 +90,41 @@ class StringProperty(id: String,
 }
 
 
+abstract class AbstractNumberProperty<T : Comparable<T>>(id: String,
+                                                         name: String?,
+                                                         parentPublisher: HomiePublisher,
+                                                         retained: Boolean = true,
+                                                         datatype: String,
+                                                         unit: String? = null,
+                                                         private val range: ClosedRange<T>?) : BaseHomieProperty<T>(
+        id = id,
+        name = name,
+        parentPublisher = parentPublisher,
+        retained = retained,
+        unit = unit,
+        datatype = datatype,
+        format = range?.let { "${it.start}:${it.endInclusive}" }) {
+
+    override fun update(t: T) {
+        range?.let { if (!it.contains(t)) throw IllegalArgumentException("Supplied value ($t) for update is out of range ($range)") }
+        super.update(t)
+    }
+
+}
+
 class NumberProperty(id: String,
                      name: String?,
                      parentPublisher: HomiePublisher,
                      retained: Boolean = true,
                      unit: String? = null,
-                     private val range: LongRange?) : BaseHomieProperty<Long>(
+                     range: LongRange?) : AbstractNumberProperty<Long>(
         id = id,
         name = name,
         retained = retained,
         unit = unit,
         parentPublisher = parentPublisher,
         datatype = "integer",
-        format = range?.let { "${it.first}:${it.last}" }
-
-
-) {
-    override fun update(t: Long) {
-        range?.let { if (!it.contains(t)) throw IllegalArgumentException("Supplied value ($t) for update is out of range ($range)") }
-        super.update(t)
-    }
-}
-
-//fun DoubleRange(start: Double, end: Double): ClosedFloatingPointRange<Double> = start.rangeTo(end)
+        range = range)
 
 
 class FloatProperty(id: String,
@@ -120,7 +132,7 @@ class FloatProperty(id: String,
                     parentPublisher: HomiePublisher,
                     retained: Boolean = true,
                     unit: String? = null,
-                    private val range: ClosedFloatingPointRange<Double>?) : BaseHomieProperty<Double>(
+                    range: ClosedRange<Double>?) : AbstractNumberProperty<Double>(
 
         id = id,
         name = name,
@@ -128,15 +140,8 @@ class FloatProperty(id: String,
         unit = unit,
         parentPublisher = parentPublisher,
         datatype = "float",
-        format = range?.let { "${it.start}:${it.endInclusive}" }
+        range = range)
 
-
-) {
-    override fun update(t: Double) {
-        range?.let { if (!it.contains(t)) throw IllegalArgumentException("Supplied value ($t) for update is out of range ($range)") }
-        super.update(t)
-    }
-}
 
 
 class EnumProperty<E : Enum<E>>(id: String,
