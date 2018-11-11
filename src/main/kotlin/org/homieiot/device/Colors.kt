@@ -1,5 +1,6 @@
 package org.homieiot.device
 
+
 data class HSV(val hue: Int, val saturation: Int, val value: Int) {
     init {
         HUE_RANGE.containsOrThrow(hue)

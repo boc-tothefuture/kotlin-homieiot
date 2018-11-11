@@ -56,6 +56,23 @@ class HomieNode(val id: String, val name: String = id, val type: String, parentP
         addProperty(FloatProperty(id = id, name = name, retained = retained, unit = unit, parentPublisher = this.publisher, range = range), init)
     }
 
+    fun rgb(id: String,
+            name: String? = null,
+            retained: Boolean = true,
+            unit: String? = null,
+            init: ((HomieProperty<RGB>.() -> Unit)) = {}) {
+        addProperty(RGBColorProperty(id = id, name = name, retained = retained, unit = unit, parentPublisher = this.publisher), init)
+    }
+
+    fun hsv(id: String,
+            name: String? = null,
+            retained: Boolean = true,
+            unit: String? = null,
+            init: ((HomieProperty<HSV>.() -> Unit)) = {}) {
+        addProperty(HSVColorProperty(id = id, name = name, retained = retained, unit = unit, parentPublisher = this.publisher), init)
+    }
+
+
 
     fun bool(id: String,
              name: String? = null,

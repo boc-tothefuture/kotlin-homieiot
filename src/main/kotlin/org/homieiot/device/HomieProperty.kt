@@ -45,7 +45,7 @@ abstract class BaseHomieProperty<T>(override val id: String,
         }
     }
 
-    protected fun valueToString(value: T): String {
+    protected open fun valueToString(value: T): String {
         return value.toString()
     }
 
@@ -106,14 +106,11 @@ abstract class AbstractNumberProperty<T : Comparable<T>>(id: String,
         format = range?.let { "${it.start}:${it.endInclusive}" }) {
 
     override fun update(t: T) {
-        range?.let { if (!it.contains(t)) throw IllegalArgumentException("Supplied value ($t) for update is out of range ($range)") }
+        range?.containsOrThrow(t)
         super.update(t)
     }
 }
 
-fun <T : Comparable<T>> ClosedRange<T>.containsOrThrow(t: T) {
-    if (!contains(t)) throw IllegalArgumentException("Supplied value ($t) for update is out of range ($this)")
-}
 
 class NumberProperty(id: String,
                      name: String?,
@@ -192,6 +189,7 @@ abstract class AbstractColorProperty<T>(id: String,
         format = colorType)
 
 
+
 class HSVColorProperty(id: String,
                        name: String?,
                        parentPublisher: HomiePublisher,
@@ -202,7 +200,11 @@ class HSVColorProperty(id: String,
         retained = retained,
         unit = unit,
         parentPublisher = parentPublisher,
-        colorType = "hsv")
+        colorType = "hsv") {
+
+    override fun valueToString(hsv: HSV): String = "${hsv.hue},${hsv.saturation},${hsv.value}"
+
+}
 
 class RGBColorProperty(id: String,
                        name: String?,
@@ -214,4 +216,7 @@ class RGBColorProperty(id: String,
         retained = retained,
         unit = unit,
         parentPublisher = parentPublisher,
-        colorType = "rgb")
+        colorType = "rgb") {
+
+    override fun valueToString(rgb: RGB): String = "${rgb.red},${rgb.green},${rgb.blue}"
+}
