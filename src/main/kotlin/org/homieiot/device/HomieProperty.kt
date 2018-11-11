@@ -109,7 +109,10 @@ abstract class AbstractNumberProperty<T : Comparable<T>>(id: String,
         range?.let { if (!it.contains(t)) throw IllegalArgumentException("Supplied value ($t) for update is out of range ($range)") }
         super.update(t)
     }
+}
 
+fun <T : Comparable<T>> ClosedRange<T>.containsOrThrow(t: T) {
+    if (!contains(t)) throw IllegalArgumentException("Supplied value ($t) for update is out of range ($this)")
 }
 
 class NumberProperty(id: String,
@@ -173,3 +176,42 @@ class BoolProperty(id: String,
         parentPublisher = parentPublisher,
         datatype = "boolean",
         format = null)
+
+abstract class AbstractColorProperty<T>(id: String,
+                                        name: String?,
+                                        parentPublisher: HomiePublisher,
+                                        retained: Boolean = true,
+                                        colorType: String,
+                                        unit: String? = null) : BaseHomieProperty<T>(
+        id = id,
+        name = name,
+        retained = retained,
+        unit = unit,
+        parentPublisher = parentPublisher,
+        datatype = "color",
+        format = colorType)
+
+
+class HSVColorProperty(id: String,
+                       name: String?,
+                       parentPublisher: HomiePublisher,
+                       retained: Boolean = true,
+                       unit: String? = null) : AbstractColorProperty<HSV>(
+        id = id,
+        name = name,
+        retained = retained,
+        unit = unit,
+        parentPublisher = parentPublisher,
+        colorType = "hsv")
+
+class RGBColorProperty(id: String,
+                       name: String?,
+                       parentPublisher: HomiePublisher,
+                       retained: Boolean = true,
+                       unit: String? = null) : AbstractColorProperty<RGB>(
+        id = id,
+        name = name,
+        retained = retained,
+        unit = unit,
+        parentPublisher = parentPublisher,
+        colorType = "rgb")
