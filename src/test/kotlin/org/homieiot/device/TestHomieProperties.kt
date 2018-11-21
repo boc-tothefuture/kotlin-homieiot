@@ -1,24 +1,45 @@
 package org.homieiot.device
 
-import org.assertj.core.api.Assertions
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
 import org.assertj.core.api.Assertions.assertThat
+import org.homieiot.mqtt.HomiePublisher
 import org.junit.jupiter.api.Test
 
 class TestHomieProperties {
 
-    private class TestPropertyGroup(retained: Boolean = true, format: String? = null, unit: String? = null) {
+    private class TestPropertyGroup(retained: Boolean = true, format: String? = null, unit: String? = null, publisher: HomiePublisher? = null) {
         val publisherMock = PublisherFake()
 
         val property: BaseHomieProperty<Any> = object : BaseHomieProperty<Any>(id = "foo",
                 name = "bar",
-                parentPublisher = publisherMock.publisher,
+                parentPublisher = publisher ?: publisherMock.publisher,
                 unit = unit,
                 datatype = "any",
                 retained = retained,
                 format = format) {
+
+            override fun propertyUpdateFromString(update: String): PropertyUpdate<Any> {
+                return PropertyUpdate(this, update)
+            }
         }
 
         val messagePairs = publisherMock.messagePairs
+    }
+
+
+    @Test
+    fun `Test Topic Segments`() {
+        val publisher = mockk<HomiePublisher>()
+        val topicList = slot<List<String>>()
+        every { publisher.topic(topicSegments = capture(topicList)) } answers { topicList.captured }
+
+        val propertyGroup = TestPropertyGroup(publisher = publisher)
+
+        assertThat(propertyGroup.property.topicSegments).isEqualTo(listOf("foo"))
+
+
     }
 
     @Test
@@ -28,11 +49,11 @@ class TestHomieProperties {
 
         propertyGroup.property.publishConfig()
 
-        Assertions.assertThat(propertyGroup.messagePairs).containsExactlyElementsOf(listOf(
-                "foo/\$name" to "bar",
-                "foo/\$settable" to "false",
-                "foo/\$retained" to "true",
-                "foo/\$datatype" to "any"
+        assertThat(propertyGroup.messagePairs).containsExactlyElementsOf(listOf(
+                Triple("foo/\$name", "bar", true),
+                Triple("foo/\$settable", "false", true),
+                Triple("foo/\$retained", "true", true),
+                Triple("foo/\$datatype", "any", true)
         ))
     }
 
@@ -46,7 +67,7 @@ class TestHomieProperties {
 
         val message = "Hello, World"
         propertyGroup.property.mqttReceived(message)
-        assertThat(messageReceived).isNotNull().isEqualTo(message)
+        assertThat(messageReceived).isNotNull.isEqualTo(message)
     }
 
 
@@ -56,7 +77,7 @@ class TestHomieProperties {
         val propertyGroup = TestPropertyGroup()
 
         propertyGroup.property.update("baz")
-        assertThat(propertyGroup.messagePairs).hasSize(1).last().isEqualTo("foo" to "baz")
+        assertThat(propertyGroup.messagePairs).hasSize(1).last().isEqualTo(Triple("foo", "baz", true))
     }
 
     @Test
@@ -64,11 +85,11 @@ class TestHomieProperties {
         val propertyGroup = TestPropertyGroup()
         propertyGroup.property.publishConfig()
 
-        assertThat(propertyGroup.messagePairs).doesNotContain("foo/\$settable" to "true")
+        assertThat(propertyGroup.messagePairs).doesNotContain(Triple("foo/\$settable", "true", true))
 
         propertyGroup.property.subscribe { }
 
-        assertThat(propertyGroup.messagePairs).contains("foo/\$settable" to "true")
+        assertThat(propertyGroup.messagePairs).contains(Triple("foo/\$settable", "true", true))
     }
 
     @Test
@@ -77,8 +98,8 @@ class TestHomieProperties {
 
         propertyGroup.property.publishConfig()
 
-        assertThat(propertyGroup.messagePairs).doesNotContain("foo/\$retained" to "true")
-        assertThat(propertyGroup.messagePairs).contains("foo/\$retained" to "false")
+        assertThat(propertyGroup.messagePairs).doesNotContain(Triple("foo/\$retained", "true", true))
+        assertThat(propertyGroup.messagePairs).contains(Triple("foo/\$retained", "false", true))
     }
 
     @Test
@@ -86,7 +107,7 @@ class TestHomieProperties {
         val propertyGroup = TestPropertyGroup()
 
         propertyGroup.property.update("baz")
-        assertThat(propertyGroup.messagePairs).hasSize(1).last().isEqualTo("foo" to "baz")
+        assertThat(propertyGroup.messagePairs).hasSize(1).last().isEqualTo(Triple("foo", "baz", true))
         propertyGroup.property.update("baz")
         assertThat(propertyGroup.messagePairs).hasSize(1)
     }
@@ -95,14 +116,14 @@ class TestHomieProperties {
     fun `Test Unit`() {
         val propertyGroup = TestPropertyGroup(unit = "foo")
         propertyGroup.property.publishConfig()
-        assertThat(propertyGroup.messagePairs).contains("foo/\$unit" to "foo")
+        assertThat(propertyGroup.messagePairs).contains(Triple("foo/\$unit", "foo", true))
     }
 
     @Test
     fun `Test Format`() {
         val propertyGroup = TestPropertyGroup(format = "foo")
         propertyGroup.property.publishConfig()
-        assertThat(propertyGroup.messagePairs).contains("foo/\$format" to "foo")
+        assertThat(propertyGroup.messagePairs).contains(Triple("foo/\$format", "foo", true))
     }
 
 }

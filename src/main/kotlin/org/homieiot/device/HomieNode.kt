@@ -5,7 +5,11 @@ import org.homieiot.mqtt.HomiePublisher
 
 
 class HomieNode(val id: String, val name: String = id, val type: String, parentPublisher: HomiePublisher) : HomieUnit {
-    private val properties = arrayListOf<HomieProperty<*>>()
+
+    private val _properties = mutableMapOf<String, HomieProperty<*>>()
+
+    internal val properties: Map<String, HomieProperty<*>>
+        get() = _properties
 
     @PublishedApi
     internal val publisher = HierarchicalHomiePublisher(parentPublisher, id)
@@ -13,28 +17,35 @@ class HomieNode(val id: String, val name: String = id, val type: String, parentP
     @PublishedApi
     internal fun <T> addProperty(property: HomieProperty<T>, init: HomieProperty<T>.() -> Unit): HomieProperty<T> {
         property.init()
-        properties += property
+        if (_properties.containsKey(property.id)) {
+            throw IllegalArgumentException("Duplicate properties IDs are not allowed - duplicate id ($property.id)")
+        }
+        _properties[property.id] = property
         publishProperties()
         return property
     }
 
-    override fun publishConfig() {
+    internal fun publishConfig(recursive: Boolean) {
         publisher.publishMessage("name".homieAttribute(), payload = name)
         publisher.publishMessage("type".homieAttribute(), payload = type)
         publishProperties()
+        if (recursive) _properties.values.forEach { it.publishConfig() }
     }
 
+    override fun publishConfig() = publishConfig(false)
+
+
     private fun publishProperties() {
-        publisher.publishMessage("properties".homieAttribute(), payload = properties.joinToString(separator = ",") { it.id })
+        publisher.publishMessage("properties".homieAttribute(), payload = _properties.keys.joinToString(separator = ","))
     }
 
     fun string(id: String,
                name: String? = null,
                retained: Boolean = true,
                unit: String? = null,
-               init: ((HomieProperty<String>.() -> Unit)) = {}) {
+               init: ((HomieProperty<String>.() -> Unit)) = {}): HomieProperty<String> {
 
-        addProperty(StringProperty(id = id, name = name, retained = retained, parentPublisher = this.publisher, unit = unit), init)
+        return addProperty(StringProperty(id = id, name = name, retained = retained, parentPublisher = this.publisher, unit = unit), init)
     }
 
 
@@ -73,7 +84,6 @@ class HomieNode(val id: String, val name: String = id, val type: String, parentP
     }
 
 
-
     fun bool(id: String,
              name: String? = null,
              retained: Boolean = true,
@@ -87,8 +97,12 @@ class HomieNode(val id: String, val name: String = id, val type: String, parentP
                                           retained: Boolean = true,
                                           unit: String? = null,
                                           noinline init: ((HomieProperty<E>.() -> Unit)) = {}) {
-        val values = enumValues<E>().map { it.name }.toList()
-        val property = EnumProperty<E>(id = id, name = name, retained = retained, unit = unit, parentPublisher = this.publisher, enumValues = values)
+
+        val property = EnumProperty(id = id, name = name, retained = retained, unit = unit,
+                parentPublisher = this.publisher,
+                enumValues = enumValues<E>().map { it.name },
+                enumMap = enumValues<E>().associateBy { it.name }
+        )
         addProperty(property, init)
     }
 

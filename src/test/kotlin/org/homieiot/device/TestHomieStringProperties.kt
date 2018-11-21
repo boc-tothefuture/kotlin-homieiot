@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 
 class TestHomieStringProperties {
 
+
     @Test
     fun `Test Property Config`() {
 
@@ -16,7 +17,7 @@ class TestHomieStringProperties {
         property.publishConfig()
 
         Assertions.assertThat(publisherMock.messagePairs).containsAll(listOf(
-                "foo/\$datatype" to "string"
+                Triple("foo" / "datatype".attr(), "string", true)
         ))
     }
 
@@ -36,7 +37,7 @@ class TestHomieStringProperties {
         publisher.messagePairs.clear()
 
         prop.update("baz")
-        Assertions.assertThat(publisher.messagePairs).hasSize(1).last().isEqualTo("foo" to "baz")
+        Assertions.assertThat(publisher.messagePairs).hasSize(1).last().isEqualTo(Triple("foo", "baz", true))
     }
 
 

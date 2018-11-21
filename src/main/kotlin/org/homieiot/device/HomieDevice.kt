@@ -15,8 +15,8 @@ interface HomieUnit {
 }
 
 
-fun String.homieAttribute(): String {
-    return "\$${this}"
+internal fun String.homieAttribute(): String {
+    return "\$$this"
 }
 
 
@@ -34,45 +34,80 @@ internal inline fun <T> simpleObservable(initialValue: T, crossinline onChange: 
         }
 
 
-public enum class HomieState { INIT, READY, DISCONNECTED, SLEEPING, LOST, ALERT }
+enum class HomieState { INIT, READY, DISCONNECTED, SLEEPING, LOST, ALERT }
 
 @DeviceTagMarker
-class HomieDevice(private val id: String, private val name: String = id, private val baseTopic: String = "homie") : HomieUnit {
+class HomieDevice(private val id: String, private val name: String = id, baseTopic: String = "homie") : HomieUnit {
 
-    private val IMPLEMENTATION = "kotlin-homie"
+    companion object {
+        private const val IMPLEMENTATION = "kotlin-homie"
+        private const val HOMIE_VERSION = "3.1.0"
+        private const val STATE_SUB_TOPIC = "\$state"
+    }
 
-    private val HOMIE_VERSION = "3.1.0"
-
-    private val nodes = mutableListOf<HomieNode>()
+    private val nodes = mutableMapOf<String, HomieNode>()
 
     var state: HomieState by simpleObservable(HomieState.INIT) { publishState() }
 
     internal val publisher: RootHomiePublisher = RootHomiePublisher(topicParts = listOf(baseTopic, id))
 
-    fun node(id: String, type: String, name: String = id, init: HomieNode.() -> Unit): HomieNode {
-        val node = HomieNode(id = id, type = type, name = name, parentPublisher = publisher)
-        node.init()
-        nodes.add(node)
-        publishNodes()
-        return node
-    }
+    internal val stateTopic = listOf(baseTopic, id, STATE_SUB_TOPIC).joinToString("/")
 
-    override fun publishConfig() {
+
+    /**
+     * Publish the devices and optionally the nodes/properties configuration.
+     * @param recursive If true, the nodes and properties of those nodes have their configuration also published
+     */
+    internal fun publishConfig(recursive: Boolean) {
         publisher.publishMessage(topicSegment = "homie".homieAttribute(), payload = HOMIE_VERSION)
         publisher.publishMessage(topicSegment = "name".homieAttribute(), payload = name)
         publisher.publishMessage(topicSegment = "implementation".homieAttribute(), payload = IMPLEMENTATION)
         publishState()
         publishNodes()
+        if (recursive) nodes.values.forEach { it.publishConfig(true) }
     }
 
+    /**
+     * Publish the devices configuration
+     */
+    override fun publishConfig() = publishConfig(false)
+
+    internal val settablePropertyMap: Map<List<String>, HomieProperty<*>>
+        get() = nodes.values.flatMap { it.properties.values }.filter { it.settable }.associate { it.topicSegments + "set" to it }
+
+
     private fun publishState() {
-        publisher.publishMessage(topicSegment = "\$state", payload = state.toString().toLowerCase())
+        publisher.publishMessage(topicSegment = STATE_SUB_TOPIC, payload = state.toString().toLowerCase())
     }
 
     private fun publishNodes() {
-        publisher.publishMessage(topicSegment = "\$nodes", payload = nodes.joinToString(",") { it.id })
+        publisher.publishMessage(topicSegment = "nodes".homieAttribute(), payload = nodes.values.joinToString(",") { it.id })
     }
 
+    private fun addNode(node: HomieNode) {
+        if (nodes.containsKey(node.id)) {
+            throw IllegalArgumentException("Duplicate node IDs are not allowed - duplicate id ($node.id)")
+        }
+        nodes[node.id] = node
+    }
+
+
+    fun node(id: String, type: String, name: String = id, init: HomieNode.() -> Unit): HomieNode {
+        val node = HomieNode(id = id, type = type, name = name, parentPublisher = publisher)
+        node.init()
+        addNode(node)
+        publishNodes()
+        return node
+    }
+
+    fun node(id: String, type: String, name: String = id, range: IntRange, init: HomieNode.(index: Int) -> Unit) {
+        range.forEach { index ->
+            val node = HomieNode(id = "id-$index", type = type, name = name, parentPublisher = publisher)
+            node.init(index)
+            addNode(node)
+        }
+        publishNodes()
+    }
 
 }
 
@@ -82,3 +117,4 @@ fun device(id: String, name: String = id, init: HomieDevice.() -> Unit): HomieDe
     device.init()
     return device
 }
+

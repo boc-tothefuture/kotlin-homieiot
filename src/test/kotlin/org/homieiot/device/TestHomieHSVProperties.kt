@@ -15,8 +15,8 @@ class TestHomieHSVProperties {
         property.publishConfig()
 
         Assertions.assertThat(publisherMock.messagePairs).containsAll(listOf(
-                "foo/\$datatype" to "color",
-                "foo/\$format" to "hsv"
+                Triple("foo" / "datatype".attr(), "color", true),
+                Triple("foo" / "format".attr(), "hsv", true)
         ))
     }
 
@@ -32,12 +32,12 @@ class TestHomieHSVProperties {
 
 
         val message = HSV(50, 50, 50)
-        property.mqttReceived(message)
-        Assertions.assertThat(messageReceived).isNotNull().isEqualTo(message)
+        property.mqttReceived("50,50,50")
+        Assertions.assertThat(messageReceived).isNotNull.isEqualTo(message)
         publisherMock.messagePairs.clear()
 
         property.update(HSV(100, 100, 100))
-        Assertions.assertThat(publisherMock.messagePairs).hasSize(1).last().isEqualTo("foo" to "100,100,100")
+        Assertions.assertThat(publisherMock.messagePairs).hasSize(1).last().isEqualTo(Triple("foo", "100,100,100", true))
     }
 
 

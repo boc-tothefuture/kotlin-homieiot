@@ -1,10 +1,26 @@
 package org.homieiot.device
 
-import org.assertj.core.api.Assertions
+import io.mockk.every
+import io.mockk.mockk
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test
 
 class TestHomieNode {
 
+    @Test
+    fun `Test duplicate property`() {
+        val publisher = PublisherFake()
+        val homieNode = HomieNode(id = "foo", name = "bar", type = "baz", parentPublisher = publisher.publisher)
+        val property = mockk<HomieProperty<Any>>()
+
+        every { property.id } answers { "foo" }
+
+        homieNode.addProperty(property) {}
+        assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            homieNode.addProperty(property) {}
+        }
+    }
 
     @Test
     fun `Test Initial Publish`() {
@@ -14,10 +30,10 @@ class TestHomieNode {
 
         homieNode.publishConfig()
 
-        Assertions.assertThat(publisher.messagePairs).containsExactlyElementsOf(listOf(
-                "foo/\$name" to "bar",
-                "foo/\$type" to "baz",
-                "foo/\$properties" to ""
+        assertThat(publisher.messagePairs).containsExactlyElementsOf(listOf(
+                Triple("foo/\$name", "bar", true),
+                Triple("foo/\$type", "baz", true),
+                Triple("foo/\$properties", "", true)
         ))
     }
 
@@ -29,12 +45,12 @@ class TestHomieNode {
 
         homieNode.publishConfig()
 
-        Assertions.assertThat(publisher.messagePairs).contains("foo/\$properties" to "")
+        assertThat(publisher.messagePairs).contains(Triple("foo/\$properties", "", true))
 
         homieNode.string(id = "hoot")
         homieNode.string(id = "qux")
 
-        Assertions.assertThat(publisher.messagePairs).contains("foo/\$properties" to "hoot,qux")
+        assertThat(publisher.messagePairs).contains(Triple("foo/\$properties", "hoot,qux", true))
 
     }
 

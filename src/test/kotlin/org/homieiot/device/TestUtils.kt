@@ -4,17 +4,21 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
+import org.homieiot.mqtt.HomieMqttMessage
 import org.homieiot.mqtt.HomiePublisher
-import org.homieiot.mqtt.MqttMessage
 import org.homieiot.mqtt.MqttPublisher
+
+
+internal operator fun String.div(other: String) = "$this/$other"
+internal fun String.attr() = "\$$this"
 
 
 internal class MqttPublisherMock {
 
     internal val mqttPublisher = mockk<MqttPublisher>()
 
-    internal val publishedMessages = mutableListOf<MqttMessage>()
+    internal val publishedMessages = mutableListOf<HomieMqttMessage>()
 
     init {
         every {
@@ -22,20 +26,24 @@ internal class MqttPublisherMock {
         } just Runs
     }
 
-    internal fun assertMessages(vararg messages: MqttMessage) {
-        Assertions.assertThat(publishedMessages).containsExactlyInAnyOrderElementsOf(messages.toList())
+    internal fun assertMessages(vararg messages: HomieMqttMessage) {
+        assertThat(publishedMessages).containsExactlyInAnyOrderElementsOf(messages.toList())
     }
 }
 
 internal class PublisherFake {
 
 
-    internal val messagePairs = mutableListOf<Pair<String, String>>()
+    internal val messagePairs = mutableListOf<Triple<String, String, Boolean>>()
 
     internal val publisher = object : HomiePublisher {
-        override fun publishMessage(topicSegments: List<String>?, payload: String) {
-            messagePairs += topicSegments!!.joinToString("/") to payload
+
+        override fun topic(topicSegments: List<String>?): List<String> = topicSegments.orEmpty()
+
+        override fun publishMessage(topicSegments: List<String>?, payload: String, retained: Boolean) {
+            messagePairs += Triple(topicSegments!!.joinToString("/"), payload, retained)
         }
+
 
     }
 
@@ -60,5 +68,5 @@ internal class NodeFake {
 }
 
 
-internal fun messageFor(vararg segments: String, payload: String): MqttMessage = MqttMessage(segments.toList(), payload)
+internal fun messageFor(vararg segments: String, payload: String, retained: Boolean = true): HomieMqttMessage = HomieMqttMessage(segments.toList(), payload, retained)
 

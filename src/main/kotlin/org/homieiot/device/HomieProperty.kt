@@ -11,6 +11,7 @@ interface HomieProperty<T> : org.homieiot.device.HomieUnit {
     val unit: String?
     val datatype: String?
     val format: String?
+    val topicSegments: List<String>
 
     fun update(t: T)
     fun subscribe(update: (PropertyUpdate<T>) -> Unit): HomieProperty<T>
@@ -20,13 +21,13 @@ interface HomieProperty<T> : org.homieiot.device.HomieUnit {
 data class PropertyUpdate<T>(val property: HomieProperty<T>, val update: T)
 
 
-abstract class BaseHomieProperty<T>(override val id: String,
-                                    override val name: String?,
+abstract class BaseHomieProperty<T>(final override val id: String,
+                                    final override val name: String?,
                                     parentPublisher: HomiePublisher,
-                                    override val retained: Boolean,
-                                    override val unit: String?,
-                                    override val datatype: String,
-                                    override val format: String?) : HomieProperty<T>, org.homieiot.device.HomieUnit {
+                                    final override val retained: Boolean,
+                                    final override val unit: String?,
+                                    final override val datatype: String,
+                                    final override val format: String?) : HomieProperty<T>, org.homieiot.device.HomieUnit {
 
     private val publisher = HierarchicalHomiePublisher(parentPublisher, id)
 
@@ -36,6 +37,8 @@ abstract class BaseHomieProperty<T>(override val id: String,
 
     override val settable: Boolean
         get() = observer != null
+
+    override val topicSegments = publisher.topic()
 
 
     override fun update(t: T) {
@@ -49,9 +52,13 @@ abstract class BaseHomieProperty<T>(override val id: String,
         return value.toString()
     }
 
-    internal fun mqttReceived(t: T) {
-        observer?.invoke(PropertyUpdate(this, t))
+    internal fun mqttReceived(update: String) {
+        observer?.invoke(propertyUpdateFromString(update))
     }
+
+    abstract fun propertyUpdateFromString(update: String): PropertyUpdate<T>
+
+
 
     override fun publishConfig() {
         name?.let { publisher.publishMessage("\$name", payload = it) }
@@ -87,6 +94,8 @@ class StringProperty(id: String,
         datatype = "string",
         parentPublisher = parentPublisher,
         format = null) {
+
+    override fun propertyUpdateFromString(update: String): PropertyUpdate<String> = PropertyUpdate(this, update)
 }
 
 
@@ -124,7 +133,10 @@ class NumberProperty(id: String,
         unit = unit,
         parentPublisher = parentPublisher,
         datatype = "integer",
-        range = range)
+        range = range) {
+
+    override fun propertyUpdateFromString(update: String): PropertyUpdate<Long> = PropertyUpdate(this, update.toLong())
+}
 
 
 class FloatProperty(id: String,
@@ -140,8 +152,10 @@ class FloatProperty(id: String,
         unit = unit,
         parentPublisher = parentPublisher,
         datatype = "float",
-        range = range)
+        range = range) {
 
+    override fun propertyUpdateFromString(update: String): PropertyUpdate<Double> = PropertyUpdate(this, update.toDouble())
+}
 
 
 class EnumProperty<E : Enum<E>>(id: String,
@@ -149,7 +163,8 @@ class EnumProperty<E : Enum<E>>(id: String,
                                 parentPublisher: HomiePublisher,
                                 retained: Boolean = true,
                                 unit: String? = null,
-                                enumValues: List<String>
+                                enumValues: List<String>,
+                                private val enumMap: Map<String, E>
 ) : BaseHomieProperty<E>(
         id = id,
         name = name,
@@ -158,7 +173,12 @@ class EnumProperty<E : Enum<E>>(id: String,
         parentPublisher = parentPublisher,
         datatype = "enum",
         format = enumValues.joinToString(",")
-)
+) {
+
+    override fun propertyUpdateFromString(update: String): PropertyUpdate<E> {
+        return PropertyUpdate(this, enumMap.getValue(update))
+    }
+}
 
 
 class BoolProperty(id: String,
@@ -172,7 +192,10 @@ class BoolProperty(id: String,
         unit = unit,
         parentPublisher = parentPublisher,
         datatype = "boolean",
-        format = null)
+        format = null) {
+
+    override fun propertyUpdateFromString(update: String): PropertyUpdate<Boolean> = PropertyUpdate(this, update.toBoolean())
+}
 
 abstract class AbstractColorProperty<T>(id: String,
                                         name: String?,
@@ -186,7 +209,15 @@ abstract class AbstractColorProperty<T>(id: String,
         unit = unit,
         parentPublisher = parentPublisher,
         datatype = "color",
-        format = colorType)
+        format = colorType) {
+
+    protected fun parseColorString(string: String): Triple<Int, Int, Int> {
+        val (first, second, third) = string.split(',').map { it.toInt() }
+        return Triple(first, second, third)
+    }
+
+
+}
 
 
 
@@ -201,6 +232,9 @@ class HSVColorProperty(id: String,
         unit = unit,
         parentPublisher = parentPublisher,
         colorType = "hsv") {
+
+    override fun propertyUpdateFromString(update: String): PropertyUpdate<HSV> = PropertyUpdate(this, HSV(parseColorString(update)))
+
 
     override fun valueToString(hsv: HSV): String = "${hsv.hue},${hsv.saturation},${hsv.value}"
 
@@ -219,4 +253,7 @@ class RGBColorProperty(id: String,
         colorType = "rgb") {
 
     override fun valueToString(rgb: RGB): String = "${rgb.red},${rgb.green},${rgb.blue}"
+
+    override fun propertyUpdateFromString(update: String): PropertyUpdate<RGB> = PropertyUpdate(this, RGB(parseColorString(update)))
 }
+

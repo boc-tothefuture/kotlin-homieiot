@@ -16,7 +16,7 @@ class TestHomieFloatProperties {
         property.publishConfig()
 
         assertThat(publisherMock.messagePairs).containsAll(listOf(
-                "foo/\$datatype" to "float"
+                Triple("foo" / "datatype".attr(), "float", true)
         ))
     }
 
@@ -30,11 +30,11 @@ class TestHomieFloatProperties {
         property.subscribe { messageReceived = it.update }
 
         val message = 55.0
-        property.mqttReceived(message)
+        property.mqttReceived(message.toString())
         assertThat(messageReceived).isNotNull().isEqualTo(message)
 
         property.update(100.0)
-        assertThat(publisher.messagePairs).last().isEqualTo("foo" to "100.0")
+        assertThat(publisher.messagePairs).last().isEqualTo(Triple("foo", "100.0", true))
     }
 
 
@@ -71,7 +71,7 @@ class TestHomieFloatProperties {
         property.publishConfig()
 
         assertThat(publisherMock.messagePairs).containsAll(listOf(
-                "foo/\$format" to "10.0:15.0"
+                Triple("foo" / "format".attr(), "10.0:15.0", true)
         ))
 
         assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {

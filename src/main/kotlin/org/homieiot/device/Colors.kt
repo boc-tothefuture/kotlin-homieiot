@@ -2,6 +2,11 @@ package org.homieiot.device
 
 
 data class HSV(val hue: Int, val saturation: Int, val value: Int) {
+
+
+    constructor(triple: Triple<Int, Int, Int>) : this(triple.first, triple.second, triple.third)
+
+
     init {
         HUE_RANGE.containsOrThrow(hue)
         SATURATION_RANGE.containsOrThrow(saturation)
@@ -16,6 +21,9 @@ data class HSV(val hue: Int, val saturation: Int, val value: Int) {
 }
 
 data class RGB(val red: Int, val green: Int, val blue: Int) {
+
+    constructor(triple: Triple<Int, Int, Int>) : this(triple.first, triple.second, triple.third)
+
     init {
         listOf(red, green, blue).forEach { RGB_RANGE.containsOrThrow(it) }
     }

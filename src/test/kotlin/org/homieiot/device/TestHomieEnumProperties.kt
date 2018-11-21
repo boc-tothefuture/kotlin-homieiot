@@ -1,6 +1,7 @@
 package org.homieiot.device
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test
 
 private class TestHomieEnumProperties {
@@ -16,14 +17,17 @@ private class TestHomieEnumProperties {
     fun `Test Property Config`() {
 
         val publisher = PublisherFake()
-        val values = enumValues<TestEnum>().map { it.name }.toList()
-        val property = EnumProperty<TestEnum>(id = "foo", name = "bar", parentPublisher = publisher.publisher, enumValues = values)
+        val values = enumValues<TestEnum>().map { it.name }
+        val map = enumValues<TestEnum>().associateBy { it.name }
+        val property = EnumProperty(id = "foo", name = "bar", parentPublisher = publisher.publisher,
+                enumValues = values,
+                enumMap = map)
 
         property.publishConfig()
 
         assertThat(publisher.messagePairs).containsAll(listOf(
-                "foo/\$datatype" to "enum",
-                "foo/\$format" to values.joinToString(",")
+                Triple("foo" / "datatype".attr(), "enum", true),
+                Triple("foo" / "format".attr(), values.joinToString(","), true)
         ))
     }
 
@@ -35,16 +39,31 @@ private class TestHomieEnumProperties {
         var messageReceived: TestEnum? = null
 
         val values = enumValues<TestEnum>().map { it.name }.toList()
-        val property = EnumProperty<TestEnum>(id = "foo", name = "bar", enumValues = values, parentPublisher = publisher.publisher)
+        val map = enumValues<TestEnum>().associateBy { it.name }
+        val property = EnumProperty(id = "foo", name = "bar", enumValues = values, parentPublisher = publisher.publisher, enumMap = map)
         property.subscribe { messageReceived = it.update }
 
         val message = TestEnum.EAST
-        property.mqttReceived(message)
+        property.mqttReceived(message.toString())
         assertThat(messageReceived).isNotNull.isEqualTo(message)
 
         property.update(TestEnum.WEST)
-        assertThat(publisher.messagePairs).last().isEqualTo("foo" to TestEnum.WEST.name)
+        assertThat(publisher.messagePairs).last().isEqualTo(Triple("foo", TestEnum.WEST.name, true))
+    }
 
+    @Test
+    fun `Throws Exception of enum value doesn't exist`() {
+        val publisher = PublisherFake()
+        var messageReceived: TestEnum? = null
+
+        val values = enumValues<TestEnum>().map { it.name }.toList()
+        val map = enumValues<TestEnum>().associateBy { it.name }
+        val property = EnumProperty(id = "foo", name = "bar", enumValues = values, parentPublisher = publisher.publisher, enumMap = map)
+        property.subscribe { messageReceived = it.update }
+
+        assertThatExceptionOfType(NoSuchElementException::class.java).isThrownBy {
+            property.mqttReceived("foo")
+        }
     }
 
     @Test
@@ -55,7 +74,6 @@ private class TestHomieEnumProperties {
         var enumProperty: HomieProperty<TestEnum>? = null
         node.enum<TestEnum>(id = "enum", retained = false, name = "foo", unit = "bar") {
             enumProperty = this
-
         }
 
         assertThat(enumProperty).isNotNull

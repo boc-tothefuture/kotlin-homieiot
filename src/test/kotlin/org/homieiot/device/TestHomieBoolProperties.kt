@@ -15,7 +15,7 @@ class TestHomieBoolProperties {
         property.publishConfig()
 
         Assertions.assertThat(publisherMock.messagePairs).containsAll(listOf(
-                "foo/\$datatype" to "boolean"
+                Triple("foo" / "datatype".attr(), "boolean", true)
         ))
     }
 
@@ -31,15 +31,15 @@ class TestHomieBoolProperties {
 
 
         val message = true
-        property.mqttReceived(message)
+        property.mqttReceived(message.toString())
         Assertions.assertThat(messageReceived).isNotNull().isEqualTo(message)
         publisherMock.messagePairs.clear()
 
         property.update(true)
-        Assertions.assertThat(publisherMock.messagePairs).hasSize(1).last().isEqualTo("foo" to "true")
+        Assertions.assertThat(publisherMock.messagePairs).hasSize(1).last().isEqualTo(Triple("foo", "true", true))
         publisherMock.messagePairs.clear()
         property.update(false)
-        Assertions.assertThat(publisherMock.messagePairs).hasSize(1).last().isEqualTo("foo" to "false")
+        Assertions.assertThat(publisherMock.messagePairs).hasSize(1).last().isEqualTo(Triple("foo", "false", true))
     }
 
 
