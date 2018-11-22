@@ -72,10 +72,10 @@ test {
 }
 
 clean.doLast {
-    file("${rootDir}/doc").deleteDir()
+    file("${rootDir}/docs").deleteDir()
 }
 
 dokka {
-    outputFormat = 'html'
-    outputDirectory = "doc"
+    outputFormat = "html"
+    outputDirectory = "docs"
 }
