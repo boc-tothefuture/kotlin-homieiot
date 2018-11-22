@@ -1,5 +1,17 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.17"
+    }
+}
+
+
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.0'
+    id 'org.jetbrains.dokka' version '0.9.17'
 }
 
 group 'org.boctothefuture'
@@ -29,7 +41,10 @@ dependencies {
     compile 'io.github.microutils:kotlin-logging:1.4.9'
     compile 'ch.qos.logback:logback-classic:1.1.3'
     compile 'ch.qos.logback:logback-core:1.1.3'
-    testCompile("org.assertj:assertj-core:3.11.1")
+    testCompile(
+            "org.assertj:assertj-core:3.11.1",
+            "com.github.stefanbirkner:system-rules:1.17.2"
+    )
     testImplementation(
             'org.junit.jupiter:junit-jupiter-api:5.3.1',
             'org.junit.jupiter:junit-jupiter-params:5.3.1',
@@ -54,4 +69,13 @@ compileTestKotlin {
 
 test {
     useJUnitPlatform()
+}
+
+clean.doLast {
+    file("${rootDir}/doc").deleteDir()
+}
+
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "doc"
 }

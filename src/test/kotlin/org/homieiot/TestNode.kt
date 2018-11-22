@@ -1,4 +1,4 @@
-package org.homieiot.device
+package org.homieiot
 
 import io.mockk.every
 import io.mockk.mockk
@@ -6,13 +6,18 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test
 
-class TestHomieNode {
+class TestNode {
+
+    @Test
+    fun `Test ID Format`() {
+        TODO("Not Implemented")
+    }
 
     @Test
     fun `Test duplicate property`() {
         val publisher = PublisherFake()
-        val homieNode = HomieNode(id = "foo", name = "bar", type = "baz", parentPublisher = publisher.publisher)
-        val property = mockk<HomieProperty<Any>>()
+        val homieNode = Node(id = "foo", name = "bar", type = "baz", parentPublisher = publisher.publisher)
+        val property = mockk<BaseProperty<Any>>()
 
         every { property.id } answers { "foo" }
 
@@ -26,7 +31,7 @@ class TestHomieNode {
     fun `Test Initial Publish`() {
 
         val publisher = PublisherFake()
-        val homieNode = HomieNode(id = "foo", name = "bar", type = "baz", parentPublisher = publisher.publisher)
+        val homieNode = Node(id = "foo", name = "bar", type = "baz", parentPublisher = publisher.publisher)
 
         homieNode.publishConfig()
 
@@ -41,7 +46,7 @@ class TestHomieNode {
     fun `Test Property Add`() {
 
         val publisher = PublisherFake()
-        val homieNode = HomieNode(id = "foo", name = "bar", type = "baz", parentPublisher = publisher.publisher)
+        val homieNode = Node(id = "foo", name = "bar", type = "baz", parentPublisher = publisher.publisher)
 
         homieNode.publishConfig()
 

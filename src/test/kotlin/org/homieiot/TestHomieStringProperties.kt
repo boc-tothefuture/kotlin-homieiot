@@ -1,4 +1,4 @@
-package org.homieiot.device
+package org.homieiot
 
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
@@ -45,13 +45,10 @@ class TestHomieStringProperties {
     fun `Test DSL`() {
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var stringProperty: HomieProperty<String>? = null
-        node.string(id = "string", retained = false, name = "foo", unit = "bar") {
-            stringProperty = this
-        }
+        var stringProperty: BaseProperty<String> = node.string(id = "string", type = PropertyType.EVENT, name = "foo", unit = "bar") as BaseProperty<String>
 
         assertThat(stringProperty).isNotNull
-        stringProperty!!.publishConfig()
+        stringProperty.publishConfig()
 
         assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
                 messageFor("homie", "device", "node", "\$properties", payload = "string"),

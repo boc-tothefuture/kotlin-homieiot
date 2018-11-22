@@ -1,4 +1,4 @@
-package org.homieiot.device
+package org.homieiot
 
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -48,23 +48,18 @@ class TestHomieBoolProperties {
 
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var boolProperty: HomieProperty<Boolean>? = null
-        node.bool(id = "bool", retained = false, name = "foo", unit = "bar") {
-            boolProperty = this
-
-        }
+        var boolProperty: BaseProperty<Boolean> = node.bool(id = "bool", type = PropertyType.EVENT, name = "foo") as BaseProperty<Boolean>
 
         Assertions.assertThat(boolProperty).isNotNull
 
-        boolProperty!!.publishConfig()
+        boolProperty.publishConfig()
 
         Assertions.assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
                 messageFor("homie", "device", "node", "\$properties", payload = "bool"),
                 messageFor("homie", "device", "node", "bool", "\$name", payload = "foo"),
                 messageFor("homie", "device", "node", "bool", "\$retained", payload = "false"),
                 messageFor("homie", "device", "node", "bool", "\$settable", payload = "false"),
-                messageFor("homie", "device", "node", "bool", "\$datatype", payload = "boolean"),
-                messageFor("homie", "device", "node", "bool", "\$unit", payload = "bar")
+                messageFor("homie", "device", "node", "bool", "\$datatype", payload = "boolean")
         )
 
 

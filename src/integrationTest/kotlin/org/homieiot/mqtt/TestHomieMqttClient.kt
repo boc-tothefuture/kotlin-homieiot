@@ -4,9 +4,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttMessage
-import org.homieiot.device.HomieDevice
-import org.homieiot.device.HomieProperty
-import org.homieiot.device.device
+import org.homieiot.Device
+import org.homieiot.Property
+import org.homieiot.device
+import org.junit.Rule
+import org.junit.contrib.java.lang.system.EnvironmentVariables
 import org.junit.jupiter.api.Test
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
@@ -19,9 +21,17 @@ import java.util.concurrent.TimeUnit
 @Testcontainers
 class TestHomieMqttClient {
 
+    @Rule
+    val environmentVariables = EnvironmentVariables()
 
     @Container
     var mosquitto: GenericContainer<*> = GenericContainer<Nothing>("eclipse-mosquitto:1.5.4").withExposedPorts(1883)
+
+
+    @Test
+    fun `Test sends disconnect message before shutdown`() {
+        TODO("Not Implemented")
+    }
 
     @Test
     fun `Test MQTT Connection`() {
@@ -34,10 +44,25 @@ class TestHomieMqttClient {
         assertThat(run).isEqualTo(true)
     }
 
+    @Test
+    fun `Test MQTT Connection From Environment`() {
+        assertThat(mosquitto.isRunning())
+        val device = device(id = "foo", name = "name") { }
+
+        environmentVariables.set("MQTT_SERVER", serverURI())
+        environmentVariables.set("MQTT_CLIENT_ID", clientID())
+        val client = HomieMqttClient.fromEnv(device = device)
+
+        val connectFuture = client.connect()
+        connectFuture.get(5, TimeUnit.SECONDS)
+        assertThat(connectFuture.isDone).isEqualTo(true)
+
+    }
+
 
     @Test
     fun `Test Homie Publish Update`() {
-        var property: HomieProperty<String>? = null
+        var property: Property<String>? = null
         val device = device(id = "foo", name = "name") {
             node(id = "node", type = "type", name = "name") {
                 property = string(id = "bar")
@@ -76,10 +101,13 @@ class TestHomieMqttClient {
     }
 
 
-    fun homieClient(device: HomieDevice, init: (client: HomieMqttClient) -> Unit): Unit {
+    fun clientID() = java.util.UUID.randomUUID().toString()
+    fun serverURI() = "tcp://${mosquitto.getContainerIpAddress()}:${mosquitto.getMappedPort(1883)}"
+
+    fun homieClient(device: Device, init: (client: HomieMqttClient) -> Unit): Unit {
         assertThat(mosquitto.isRunning())
-        val client = HomieMqttClient(serverURI = "tcp://${mosquitto.getContainerIpAddress()}:${mosquitto.getMappedPort(1883)}",
-                clientID = java.util.UUID.randomUUID().toString(),
+        val client = HomieMqttClient(serverURI = serverURI(),
+                clientID = clientID(),
                 device = device)
         val connectFuture = client.connect()
         connectFuture.get(5, TimeUnit.SECONDS)
@@ -89,7 +117,7 @@ class TestHomieMqttClient {
     }
 
 
-    fun client() = MqttClient("tcp://${mosquitto.getContainerIpAddress()}:${mosquitto.getMappedPort(1883)}", java.util.UUID.randomUUID().toString())
+    fun client() = MqttClient(serverURI(), clientID())
 
     fun publishMessage(topic: String, message: String) {
         client().apply {

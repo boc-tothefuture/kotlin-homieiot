@@ -1,6 +1,7 @@
-package org.homieiot.device
+package org.homieiot
 
 import org.assertj.core.api.Assertions
+import org.homieiot.colors.HSV
 import org.junit.jupiter.api.Test
 
 class TestHomieHSVProperties {
@@ -46,15 +47,11 @@ class TestHomieHSVProperties {
 
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var hsvProperty: HomieProperty<HSV>? = null
-        node.hsv(id = "hsv", retained = false, name = "foo", unit = "bar") {
-            hsvProperty = this
-
-        }
+        var hsvProperty: BaseProperty<HSV> = node.hsv(id = "hsv", type = PropertyType.EVENT, name = "foo") as BaseProperty
 
         Assertions.assertThat(hsvProperty).isNotNull
 
-        hsvProperty!!.publishConfig()
+        hsvProperty.publishConfig()
 
         Assertions.assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
                 messageFor("homie", "device", "node", "\$properties", payload = "hsv"),
@@ -62,8 +59,7 @@ class TestHomieHSVProperties {
                 messageFor("homie", "device", "node", "hsv", "\$retained", payload = "false"),
                 messageFor("homie", "device", "node", "hsv", "\$settable", payload = "false"),
                 messageFor("homie", "device", "node", "hsv", "\$datatype", payload = "color"),
-                messageFor("homie", "device", "node", "hsv", "\$format", payload = "hsv"),
-                messageFor("homie", "device", "node", "hsv", "\$unit", payload = "bar")
+                messageFor("homie", "device", "node", "hsv", "\$format", payload = "hsv")
         )
 
 

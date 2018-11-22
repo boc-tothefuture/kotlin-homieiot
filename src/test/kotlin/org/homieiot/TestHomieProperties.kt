@@ -1,4 +1,4 @@
-package org.homieiot.device
+package org.homieiot
 
 import io.mockk.every
 import io.mockk.mockk
@@ -9,15 +9,15 @@ import org.junit.jupiter.api.Test
 
 class TestHomieProperties {
 
-    private class TestPropertyGroup(retained: Boolean = true, format: String? = null, unit: String? = null, publisher: HomiePublisher? = null) {
+    private class TestPropertyGroup(type: PropertyType = PropertyType.STATE, format: String? = null, unit: String? = null, publisher: HomiePublisher? = null) {
         val publisherMock = PublisherFake()
 
-        val property: BaseHomieProperty<Any> = object : BaseHomieProperty<Any>(id = "foo",
+        val property: BaseProperty<Any> = object : BaseProperty<Any>(id = "foo",
                 name = "bar",
                 parentPublisher = publisher ?: publisherMock.publisher,
                 unit = unit,
                 datatype = "any",
-                retained = retained,
+                type = type,
                 format = format) {
 
             override fun propertyUpdateFromString(update: String): PropertyUpdate<Any> {
@@ -26,6 +26,12 @@ class TestHomieProperties {
         }
 
         val messagePairs = publisherMock.messagePairs
+    }
+
+
+    @Test
+    fun `Test ID Format`() {
+        TODO("Not Implemented")
     }
 
 
@@ -94,7 +100,7 @@ class TestHomieProperties {
 
     @Test
     fun `Test Retained`() {
-        val propertyGroup = TestPropertyGroup(retained = false)
+        val propertyGroup = TestPropertyGroup(type = PropertyType.EVENT)
 
         propertyGroup.property.publishConfig()
 

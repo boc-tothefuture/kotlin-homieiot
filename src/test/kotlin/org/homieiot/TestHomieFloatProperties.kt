@@ -1,4 +1,4 @@
-package org.homieiot.device
+package org.homieiot
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
@@ -43,13 +43,10 @@ class TestHomieFloatProperties {
 
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var numberProperty: HomieProperty<Double>? = null
-        node.float(id = "float", retained = false, name = "foo", unit = "bar") {
-            numberProperty = this
-        }
+        var numberProperty: BaseProperty<Double> = node.float(id = "float", type = PropertyType.EVENT, name = "foo", unit = "bar") as BaseProperty
 
         assertThat(numberProperty).isNotNull
-        numberProperty!!.publishConfig()
+        numberProperty.publishConfig()
 
         assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
                 messageFor("homie", "device", "node", "\$properties", payload = "float"),

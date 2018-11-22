@@ -1,4 +1,4 @@
-package org.homieiot.device
+package org.homieiot
 
 import io.mockk.*
 import org.assertj.core.api.Assertions
@@ -6,7 +6,17 @@ import org.assertj.core.api.Assertions.assertThat
 import org.homieiot.mqtt.HomiePublisher
 import org.junit.jupiter.api.Test
 
-class TestHomieDevice {
+class TestDevice {
+
+    @Test
+    fun `Test ID Format`() {
+        TODO("Not Implemented")
+    }
+
+    @Test
+    fun `Test Publishes Ready State`() {
+        TODO("Not Implemented")
+    }
 
 
     @Test
@@ -27,7 +37,7 @@ class TestHomieDevice {
 
         publisherMock.assertMessages(
                 messageFor("homie", "foo", "\$state", payload = "init"),
-                messageFor("homie", "foo", "\$homie", payload = "3.1.0"),
+                messageFor("homie", "foo", "\$homie", payload = "3.0.1"),
                 messageFor("homie", "foo", "\$name", payload = "foo"),
                 messageFor("homie", "foo", "\$implementation", payload = "kotlin-homie"),
                 messageFor("homie", "foo", "\$nodes", payload = "qux")
@@ -51,7 +61,7 @@ class TestHomieDevice {
     fun `Test Node Range`() {
         var invokeCount = 0
         val range = 1..6
-        val homieDevice = device(id = "foo", name = "foo") {
+        device(id = "foo", name = "foo") {
             node(id = "qux", type = "qoo", range = range) {
                 invokeCount++
             }
@@ -73,11 +83,11 @@ class TestHomieDevice {
 
         homieDevice.publisher.mqttPublisher = publisherMock.mqttPublisher
 
-        homieDevice.publishConfig(recursive = true)
+        homieDevice.publishConfig(includeNodes = true)
 
         publisherMock.assertMessages(
                 messageFor("homie", "foo", "state".attr(), payload = "init"),
-                messageFor("homie", "foo", "homie".attr(), payload = "3.1.0"),
+                messageFor("homie", "foo", "homie".attr(), payload = "3.0.1"),
                 messageFor("homie", "foo", "name".attr(), payload = "foo"),
                 messageFor("homie", "foo", "implementation".attr(), payload = "kotlin-homie"),
                 messageFor("homie", "foo", "nodes".attr(), payload = "qux"),
@@ -138,11 +148,10 @@ class TestHomieDevice {
 
         homieDevice.publisher.mqttPublisher = publisherMock.mqttPublisher
 
-        assertThat(homieDevice.state).isEqualTo(HomieState.INIT)
-        homieDevice.state = HomieState.READY
+        homieDevice.state(Device.State.READY)
 
         publisherMock.assertMessages(messageFor("homie", "foo", "\$state",
-                payload = HomieState.READY.toString().toLowerCase()))
+                payload = Device.InternalState.READY.toString()))
     }
 
     @Test

@@ -1,6 +1,7 @@
-package org.homieiot.device
+package org.homieiot
 
 import org.assertj.core.api.Assertions
+import org.homieiot.colors.RGB
 import org.junit.jupiter.api.Test
 
 class TestHomieRGBProperties {
@@ -46,15 +47,11 @@ class TestHomieRGBProperties {
 
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var rgbProperty: HomieProperty<RGB>? = null
-        node.rgb(id = "rgb", retained = false, name = "foo", unit = "bar") {
-            rgbProperty = this
-
-        }
+        var rgbProperty: BaseProperty<RGB> = node.rgb(id = "rgb", type = PropertyType.EVENT, name = "foo") as BaseProperty<RGB>
 
         Assertions.assertThat(rgbProperty).isNotNull
 
-        rgbProperty!!.publishConfig()
+        rgbProperty.publishConfig()
 
         Assertions.assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
                 messageFor("homie", "device", "node", "\$properties", payload = "rgb"),
@@ -62,8 +59,7 @@ class TestHomieRGBProperties {
                 messageFor("homie", "device", "node", "rgb", "\$retained", payload = "false"),
                 messageFor("homie", "device", "node", "rgb", "\$settable", payload = "false"),
                 messageFor("homie", "device", "node", "rgb", "\$datatype", payload = "color"),
-                messageFor("homie", "device", "node", "rgb", "\$format", payload = "rgb"),
-                messageFor("homie", "device", "node", "rgb", "\$unit", payload = "bar")
+                messageFor("homie", "device", "node", "rgb", "\$format", payload = "rgb")
         )
 
 

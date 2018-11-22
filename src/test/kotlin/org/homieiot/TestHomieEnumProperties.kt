@@ -1,4 +1,4 @@
-package org.homieiot.device
+package org.homieiot
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
@@ -54,12 +54,11 @@ private class TestHomieEnumProperties {
     @Test
     fun `Throws Exception of enum value doesn't exist`() {
         val publisher = PublisherFake()
-        var messageReceived: TestEnum? = null
 
         val values = enumValues<TestEnum>().map { it.name }.toList()
         val map = enumValues<TestEnum>().associateBy { it.name }
         val property = EnumProperty(id = "foo", name = "bar", enumValues = values, parentPublisher = publisher.publisher, enumMap = map)
-        property.subscribe { messageReceived = it.update }
+        property.subscribe { it.update }
 
         assertThatExceptionOfType(NoSuchElementException::class.java).isThrownBy {
             property.mqttReceived("foo")
@@ -71,14 +70,11 @@ private class TestHomieEnumProperties {
 
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var enumProperty: HomieProperty<TestEnum>? = null
-        node.enum<TestEnum>(id = "enum", retained = false, name = "foo", unit = "bar") {
-            enumProperty = this
-        }
+        var enumProperty: BaseProperty<TestEnum> = node.enum<TestEnum>(id = "enum", type = PropertyType.EVENT, name = "foo", unit = "bar") as BaseProperty
 
         assertThat(enumProperty).isNotNull
 
-        enumProperty!!.publishConfig()
+        enumProperty.publishConfig()
 
         assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
                 messageFor("homie", "device", "node", "\$properties", payload = "enum"),

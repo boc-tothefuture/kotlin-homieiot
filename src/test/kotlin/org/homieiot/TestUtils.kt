@@ -1,4 +1,4 @@
-package org.homieiot.device
+package org.homieiot
 
 import io.mockk.Runs
 import io.mockk.every
@@ -55,8 +55,8 @@ internal class NodeFake {
 
     internal val publishedMessages = mqttMock.publishedMessages
 
-    internal fun node(): HomieNode {
-        var node: HomieNode? = null
+    internal fun node(): Node {
+        var node: Node? = null
         val device = device(id = "device", name = "foo") {
             node = node(id = "node", name = "bar", type = "test") {}
         }

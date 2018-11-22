@@ -1,8 +1,10 @@
-package org.homieiot.device
+package org.homieiot
 
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
+import org.homieiot.colors.HSV
+import org.homieiot.colors.RGB
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 

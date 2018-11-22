@@ -2,8 +2,8 @@ package org.homieiot.mqtt
 
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.homieiot.device.MqttPublisherMock
-import org.homieiot.device.messageFor
+import org.homieiot.MqttPublisherMock
+import org.homieiot.messageFor
 import org.junit.jupiter.api.Test
 
 class TestHomiePublishers {

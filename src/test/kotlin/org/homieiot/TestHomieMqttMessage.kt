@@ -1,4 +1,4 @@
-package org.homieiot.device
+package org.homieiot
 
 import org.assertj.core.api.Assertions
 import org.homieiot.mqtt.HomieMqttMessage

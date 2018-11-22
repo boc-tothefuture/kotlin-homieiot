@@ -2,9 +2,8 @@ package org.homieiot.mqtt
 
 import mu.KotlinLogging
 import org.eclipse.paho.client.mqttv3.*
-import org.homieiot.device.BaseHomieProperty
-import org.homieiot.device.HomieDevice
-import org.homieiot.device.HomieState
+import org.homieiot.BaseProperty
+import org.homieiot.Device
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
@@ -13,10 +12,27 @@ class HomieMqttClient(serverURI: String,
                       clientID: String,
                       private val username: String? = null,
                       private val password: String? = null,
-                      private val device: HomieDevice) {
+                      private val device: Device) {
 
     companion object {
         private const val QUALITY_OF_SERVICE: Int = 1
+
+        private const val MQTT_SERVER: String = "MQTT_SERVER"
+        private const val MQTT_CLIENT_ID: String = "MQTT_CLIENT_ID"
+        private const val MQTT_USERNAME: String = "MQTT_USERNAME"
+        private const val MQTT_PASSWORD: String = "MQTT_PASSWORD"
+
+        fun fromEnv(device: Device): HomieMqttClient {
+            val serverURI = System.getenv(MQTT_SERVER)
+                    ?: throw IllegalArgumentException("Environment missing $MQTT_SERVER variable")
+            val clientID = System.getenv(MQTT_CLIENT_ID)
+                    ?: throw IllegalArgumentException("Environment missing $MQTT_CLIENT_ID variable")
+            return HomieMqttClient(serverURI = serverURI,
+                    clientID = clientID,
+                    username = System.getenv(MQTT_USERNAME),
+                    password = System.getenv(MQTT_PASSWORD),
+                    device = device)
+        }
     }
 
     private fun String.mqttPayload() = this.toByteArray(Charsets.UTF_8)
@@ -34,7 +50,7 @@ class HomieMqttClient(serverURI: String,
         isCleanSession = false
         this@HomieMqttClient.username?.let { userName = it }
         this@HomieMqttClient.password?.let { password = it.toCharArray() }
-        setWill(device.stateTopic, HomieState.LOST.toString().toLowerCase().mqttPayload(), QUALITY_OF_SERVICE, true)
+        setWill(device.stateTopic, Device.InternalState.LOST.toString().toLowerCase().mqttPayload(), QUALITY_OF_SERVICE, true)
     }
 
 
@@ -60,7 +76,7 @@ class HomieMqttClient(serverURI: String,
     private fun subscribe() {
         settablePropertyMap.entries.forEach { (topic, property) ->
             client.subscribe(topic, QUALITY_OF_SERVICE) { _, message ->
-                if (property is BaseHomieProperty) {
+                if (property is BaseProperty) {
                     val value = String(message.payload, Charsets.UTF_8)
                     property.mqttReceived(value)
                 } else {
