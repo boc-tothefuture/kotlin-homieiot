@@ -1,0 +1,38 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Device.node - kotlin-homie</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlin-homie</a>&nbsp;/&nbsp;<a href="../index.html">org.homieiot</a>&nbsp;/&nbsp;<a href="index.html">Device</a>&nbsp;/&nbsp;<a href="./node.html">node</a><br/>
+<br/>
+<h1>node</h1>
+<a name="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Node, kotlin.Unit)))"></a>
+<code><span class="keyword">fun </span><span class="identifier">node</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Node, kotlin.Unit)))/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Node, kotlin.Unit)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Node, kotlin.Unit)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;id<span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Node, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-node/index.html"><span class="identifier">Node</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-node/index.html"><span class="identifier">Node</span></a></code>
+<p>Add a <a href="#">org.homieiot.device.Node</a> to this device</p>
+<h3>Parameters</h3>
+<p><a name="id"></a>
+<code>id</code> - Each node must have a unique device ID which adheres to the <a href="https://homieiot.github.io/specification/spec-core-v3_0_1/#topic-ids">homie id convention</a></p>
+<p><a name="name"></a>
+<code>name</code> - Friendly name of the node</p>
+<p><a name="type"></a>
+<code>type</code> - Description of the node type, for example if the node was a car engine, the type may be "V8"</p>
+<p><a name="init"></a>
+<code>init</code> - Function that supplies this node to enable adding properties to the node</p>
+<a name="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))"></a>
+<code><span class="keyword">fun </span><span class="identifier">node</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;id<span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/range">range</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.ranges/-int-range/index.html"><span class="identifier">IntRange</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-node/index.html"><span class="identifier">Node</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="identifier">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Add a range of <a href="#">org.homieiot.device.Node</a> to this device</p>
+<h3>Parameters</h3>
+<p><a name="id"></a>
+<code>id</code> - Each node must have a unique device ID which adheres to the <a href="https://homieiot.github.io/specification/spec-core-v3_0_1/#topic-ids">homie id convention</a>.</p>
+<p><a name="name"></a>
+<code>name</code> - Friendly name of the node</p>
+<p><a name="type"></a>
+<code>type</code> - Description of the node type, for example if the node was a car engine, the type may be "V8"</p>
+<p><a name="range"></a>
+<code>range</code> - Creates multiple nodes, automatically incrementing the id of each with "-" and a number in the range. For example, if the <a href="node.html#org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/id">id</a> is "foo" and <a href="node.html#org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/range">range</a> is 1..3 nodes with ids "foo-1", "foo-2" and "foo-3" will be created.</p>
+<p><a name="init"></a>
+<code>init</code> - Function that takes the index of an node and this node itself to enable adding properties to the node</p>
+</BODY>
+</HTML>

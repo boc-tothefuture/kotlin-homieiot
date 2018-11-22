@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>org.homieiot - kotlin-homie</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">kotlin-homie</a>&nbsp;/&nbsp;<a href="./index.html">org.homieiot</a><br/>
+<br/>
+<h2>Package org.homieiot</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-device/index.html">Device</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Device</span></code>
+<p>A device represents a physical piece of hardware. For example, an Arduino/ESP8266 or a coffee machine.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-node/index.html">Node</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Node</span></code>
+<p>Nodes are independent or logically separable parts of a device. For example, a car might expose a wheels node, an engine node and a lights node.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-property/index.html">Property</a></p>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Property</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="-property-type/index.html">PropertyType</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">PropertyType</span></code>
+<p>Defines the different types of properties depending on the feature of the node being modeled.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="-property-update/index.html">PropertyUpdate</a></p>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">PropertyUpdate</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code>
+<p>A property update delivered from MQTT</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="device.html">device</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">device</span><span class="symbol">(</span><span class="identifier" id="org.homieiot$device(kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Device, kotlin.Unit)))/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot$device(kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Device, kotlin.Unit)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;id<span class="symbol">, </span><span class="identifier" id="org.homieiot$device(kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Device, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="-device/index.html"><span class="identifier">Device</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="-device/index.html"><span class="identifier">Device</span></a></code>
+<p>Create a new device instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

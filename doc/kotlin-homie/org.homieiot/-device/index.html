@@ -1,0 +1,55 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>Device - kotlin-homie</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">kotlin-homie</a>&nbsp;/&nbsp;<a href="../index.html">org.homieiot</a>&nbsp;/&nbsp;<a href="./index.html">Device</a><br/>
+<br/>
+<h1>Device</h1>
+<code><span class="keyword">class </span><span class="identifier">Device</span></code>
+<p>A device represents a physical piece of hardware. For example, an Arduino/ESP8266 or a coffee machine.</p>
+<p>A device is composed of one or more <a href="#">org.homieiot.device.Node</a> objects.  Nodes are independent or logically separable parts of a device.</p>
+<p>Nodes are themselves composed by <a href="#">org.homieiot.device.Property</a> objects.  Properties represent basic characteristics of the node/device, often given as numbers or finite states.</p>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-state/index.html">State</a></p>
+</td>
+<td>
+<code><span class="keyword">enum</span> <span class="keyword">class </span><span class="identifier">State</span></code>
+<p>The current state of the device.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="node.html">node</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">node</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Node, kotlin.Unit)))/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Node, kotlin.Unit)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Node, kotlin.Unit)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;id<span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.Function1((org.homieiot.Node, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-node/index.html"><span class="identifier">Node</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-node/index.html"><span class="identifier">Node</span></a></code>
+<p>Add a <a href="#">org.homieiot.device.Node</a> to this device</p>
+<code><span class="keyword">fun </span><span class="identifier">node</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;id<span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/range">range</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.ranges/-int-range/index.html"><span class="identifier">IntRange</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.Device$node(kotlin.String, kotlin.String, kotlin.String, kotlin.ranges.IntRange, kotlin.Function2((org.homieiot.Node, kotlin.Int, kotlin.Unit)))/init">init</span><span class="symbol">:</span>&nbsp;<a href="../-node/index.html"><span class="identifier">Node</span></a><span class="symbol">.</span><span class="symbol">(</span><span class="identifier">index</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Add a range of <a href="#">org.homieiot.device.Node</a> to this device</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="state.html">state</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">state</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.Device$state(org.homieiot.Device.State)/state">state</span><span class="symbol">:</span>&nbsp;<a href="-state/index.html"><span class="identifier">State</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Set the <a href="state.html#org.homieiot.Device$state(org.homieiot.Device.State)/state">state</a> based on the state of the physical or virtual device.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
