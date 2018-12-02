@@ -5,13 +5,28 @@ import org.homieiot.colors.RGB
 import org.homieiot.mqtt.HierarchicalHomiePublisher
 import org.homieiot.mqtt.HomiePublisher
 
+/**
+ * A [Homie Property](https://homieiot.github.io/specification/#properties)
+ *
+ * @property id Unique ID that conforms to [Homie convention for IDs](https://homieiot.github.io/specification/#topic-ids)
+ * @property name User supplied friendly name for property
+ */
 interface Property<T> {
+
     val id: String
     val name: String?
-    val unit: String?
 
+    /**
+     * Submits an update to controller
+     * @param t Updated value
+     */
     fun update(t: T)
-    fun subscribe(update: (PropertyUpdate<T>) -> Unit): Property<T>
+
+    /**
+     * Called when the controller sends a property update
+     * @param update Update received from controller
+     */
+    fun subscribe(update: (PropertyUpdate<T>) -> Unit)
 }
 
 
@@ -42,9 +57,14 @@ internal abstract class BaseProperty<T>(final override val id: String,
                                         final override val name: String?,
                                         parentPublisher: HomiePublisher,
                                         type: PropertyType,
-                                        final override val unit: String?,
+                                        val unit: String?,
                                         val datatype: String,
                                         val format: String?) : Property<T> {
+
+
+    init {
+        idRequire(id)
+    }
 
     private val publisher = HierarchicalHomiePublisher(parentPublisher, id)
 
@@ -89,10 +109,9 @@ internal abstract class BaseProperty<T>(final override val id: String,
         publisher.publishMessage("\$settable", payload = settable.toString())
     }
 
-    override fun subscribe(update: (PropertyUpdate<T>) -> Unit): Property<T> {
+    override fun subscribe(update: (PropertyUpdate<T>) -> Unit) {
         this.observer = update
         publishSettable()
-        return this
     }
 
 }
@@ -173,21 +192,6 @@ internal class FloatProperty(id: String,
     override fun propertyUpdateFromString(update: String): PropertyUpdate<Double> = PropertyUpdate(this, update.toDouble())
 }
 
-/**
- * Internal method that is public to support the fact that creating enums in the node class uses inline reified generics
- * @suppress
- */
-fun <E : Enum<E>> enum(id: String,
-                       name: String?,
-                       parentPublisher: HomiePublisher,
-                       type: PropertyType = PropertyType.STATE,
-                       unit: String? = null,
-                       enumValues: List<String>,
-                       enumMap: Map<String, E>): Property<E> {
-
-
-    return EnumProperty(id = id, name = name, type = type, unit = unit, parentPublisher = parentPublisher, enumValues = enumValues, enumMap = enumMap);
-}
 
 internal class EnumProperty<E : Enum<E>>(id: String,
                                          name: String?,

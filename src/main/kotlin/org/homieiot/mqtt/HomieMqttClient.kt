@@ -2,16 +2,25 @@ package org.homieiot.mqtt
 
 import mu.KotlinLogging
 import org.eclipse.paho.client.mqttv3.*
-import org.homieiot.BaseProperty
 import org.homieiot.Device
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
+import java.util.concurrent.atomic.AtomicInteger
 
 
+/**
+ * Creates a Homie MQTT client for the supplied [org.homieiot.Device]
+ *
+ * @param [serverURI] in the format of tcp://host:port for the MQTT Broker to connect
+ * @param [clientID] Supplied MQTT Client ID
+ * @param [username] Optional username to connect to MQTT
+ * @param [password] Optional password to connect to MQTT
+ */
 class HomieMqttClient(serverURI: String,
                       clientID: String,
                       private val username: String? = null,
                       private val password: String? = null,
+                      private val homieRoot: String = "homie",
                       private val device: Device) {
 
     companion object {
@@ -22,6 +31,13 @@ class HomieMqttClient(serverURI: String,
         private const val MQTT_USERNAME: String = "MQTT_USERNAME"
         private const val MQTT_PASSWORD: String = "MQTT_PASSWORD"
 
+
+        /**
+         * Creates a new HomieMqttClient for the [device] default environment variables
+         * The environment must contain an MQTT_SERVER URI in format of tcp://host:port and an MQTT_CLIENT_ID variable
+         * Additionally, the method supports extracting the MQTT_USERNAME and MQTT_PASSWORD environment variables
+         *
+         */
         fun fromEnv(device: Device): HomieMqttClient {
             val serverURI = System.getenv(MQTT_SERVER)
                     ?: throw IllegalArgumentException("Environment missing $MQTT_SERVER variable")
@@ -34,6 +50,9 @@ class HomieMqttClient(serverURI: String,
                     device = device)
         }
     }
+
+
+    private val connectLatch = AtomicInteger(1)
 
     private fun String.mqttPayload() = this.toByteArray(Charsets.UTF_8)
 
@@ -50,7 +69,7 @@ class HomieMqttClient(serverURI: String,
         isCleanSession = false
         this@HomieMqttClient.username?.let { userName = it }
         this@HomieMqttClient.password?.let { password = it.toCharArray() }
-        setWill(device.stateTopic, Device.InternalState.LOST.toString().toLowerCase().mqttPayload(), QUALITY_OF_SERVICE, true)
+        setWill("$homieRoot/${device.stateTopic}", Device.InternalState.LOST.toString().toLowerCase().mqttPayload(), QUALITY_OF_SERVICE, true)
     }
 
 
@@ -61,30 +80,47 @@ class HomieMqttClient(serverURI: String,
     }
 
 
+    /**
+     * Connect client to MQTT library
+     *
+     * This method may only be called once and should be called when the application is ready to receive and send messages to the broker.
+     * Client will automatically reconnect if necessary.
+     *
+     * @throws IllegalStateException If called more than once.
+     * @return Future that completes after connection to broker is complete.
+     */
     fun connect(): Future<Any> {
+        check(connectLatch.compareAndSet(1, 0)) { "Connect may only be called once" }
         device.publisher.mqttPublisher = object : MqttPublisher {
             override fun publishMessage(message: HomieMqttMessage) {
-                client.publish(message.topic, message.payload.mqttPayload(), QUALITY_OF_SERVICE, message.retained)
+                logger.debug { "Publishing message (${message.payload}) on topic ($homieRoot/${message.topic})" }
+                client.publish("$homieRoot/${message.topic}", message.payload.mqttPayload(), QUALITY_OF_SERVICE, message.retained)
             }
         }
         return client.connectFuture()
     }
 
-    fun disconnect() = client.disconnect()
+    /**
+     * Disconnect MQTT Client
+     *
+     * This should be called during shutdown. Client may not be reconnected.
+     * This function will wait up to 5 seconds to send any pending messages.
+     */
+    fun disconnect() {
+        device.state = Device.InternalState.DISCONNECTED
+        client.disconnect(5)
+        client.close()
+    }
 
 
     private fun subscribe() {
         settablePropertyMap.entries.forEach { (topic, property) ->
-            client.subscribe(topic, QUALITY_OF_SERVICE) { _, message ->
-                if (property is BaseProperty) {
-                    val value = String(message.payload, Charsets.UTF_8)
-                    property.mqttReceived(value)
-                } else {
-                    logger.warn { "Received message on topic ($topic) with associated property setter" }
-                }
+            client.subscribe("$homieRoot/$topic", QUALITY_OF_SERVICE) { _, message ->
+                val value = String(message.payload, Charsets.UTF_8)
+                property.mqttReceived(value)
             }
-
         }
+        device.state = Device.InternalState.READY
     }
 
     private class ConnectListener : IMqttActionListener {
@@ -116,9 +152,7 @@ class HomieMqttClient(serverURI: String,
         }
 
         override fun deliveryComplete(token: IMqttDeliveryToken) {
-            token.topics.forEach { topic ->
-                logger.debug { "Message delivered on topic ($topic)" }
-            }
+            token.topics.forEach { logger.debug { "Message delivered on topic ($it)" } }
         }
     }
 

@@ -55,11 +55,11 @@ class TestHomieBoolProperties {
         boolProperty.publishConfig()
 
         Assertions.assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("homie", "device", "node", "\$properties", payload = "bool"),
-                messageFor("homie", "device", "node", "bool", "\$name", payload = "foo"),
-                messageFor("homie", "device", "node", "bool", "\$retained", payload = "false"),
-                messageFor("homie", "device", "node", "bool", "\$settable", payload = "false"),
-                messageFor("homie", "device", "node", "bool", "\$datatype", payload = "boolean")
+                messageFor("device", "node", "\$properties", payload = "bool"),
+                messageFor("device", "node", "bool", "\$name", payload = "foo"),
+                messageFor("device", "node", "bool", "\$retained", payload = "false"),
+                messageFor("device", "node", "bool", "\$settable", payload = "false"),
+                messageFor("device", "node", "bool", "\$datatype", payload = "boolean")
         )
 
 

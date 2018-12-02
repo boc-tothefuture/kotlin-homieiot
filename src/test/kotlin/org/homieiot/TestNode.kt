@@ -10,7 +10,9 @@ class TestNode {
 
     @Test
     fun `Test ID Format`() {
-        TODO("Not Implemented")
+        assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            Node(id = "", name = "bar", type = "baz", parentPublisher = mockk())
+        }
     }
 
     @Test

@@ -77,13 +77,13 @@ private class TestHomieEnumProperties {
         enumProperty.publishConfig()
 
         assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("homie", "device", "node", "\$properties", payload = "enum"),
-                messageFor("homie", "device", "node", "enum", "\$name", payload = "foo"),
-                messageFor("homie", "device", "node", "enum", "\$retained", payload = "false"),
-                messageFor("homie", "device", "node", "enum", "\$settable", payload = "false"),
-                messageFor("homie", "device", "node", "enum", "\$datatype", payload = "enum"),
-                messageFor("homie", "device", "node", "enum", "\$format", payload = "NORTH,SOUTH,EAST,WEST"),
-                messageFor("homie", "device", "node", "enum", "\$unit", payload = "bar")
+                messageFor("device", "node", "\$properties", payload = "enum"),
+                messageFor("device", "node", "enum", "\$name", payload = "foo"),
+                messageFor("device", "node", "enum", "\$retained", payload = "false"),
+                messageFor("device", "node", "enum", "\$settable", payload = "false"),
+                messageFor("device", "node", "enum", "\$datatype", payload = "enum"),
+                messageFor("device", "node", "enum", "\$format", payload = "NORTH,SOUTH,EAST,WEST"),
+                messageFor("device", "node", "enum", "\$unit", payload = "bar")
         )
 
     }

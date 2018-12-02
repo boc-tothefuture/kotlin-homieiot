@@ -54,12 +54,12 @@ class TestHomieHSVProperties {
         hsvProperty.publishConfig()
 
         Assertions.assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("homie", "device", "node", "\$properties", payload = "hsv"),
-                messageFor("homie", "device", "node", "hsv", "\$name", payload = "foo"),
-                messageFor("homie", "device", "node", "hsv", "\$retained", payload = "false"),
-                messageFor("homie", "device", "node", "hsv", "\$settable", payload = "false"),
-                messageFor("homie", "device", "node", "hsv", "\$datatype", payload = "color"),
-                messageFor("homie", "device", "node", "hsv", "\$format", payload = "hsv")
+                messageFor("device", "node", "\$properties", payload = "hsv"),
+                messageFor("device", "node", "hsv", "\$name", payload = "foo"),
+                messageFor("device", "node", "hsv", "\$retained", payload = "false"),
+                messageFor("device", "node", "hsv", "\$settable", payload = "false"),
+                messageFor("device", "node", "hsv", "\$datatype", payload = "color"),
+                messageFor("device", "node", "hsv", "\$format", payload = "hsv")
         )
 
 

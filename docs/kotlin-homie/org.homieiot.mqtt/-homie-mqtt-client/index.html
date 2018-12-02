@@ -9,6 +9,16 @@
 <br/>
 <h1>HomieMqttClient</h1>
 <code><span class="keyword">class </span><span class="identifier">HomieMqttClient</span></code>
+<p>Creates a Homie MQTT client for the supplied <a href="../../org.homieiot/-device/index.html">org.homieiot.Device</a></p>
+<h3>Parameters</h3>
+<p><a name="serverURI"></a>
+<code>serverURI</code> - in the format of tcp://host:port for the MQTT Broker to connect</p>
+<p><a name="clientID"></a>
+<code>clientID</code> - Supplied MQTT Client ID</p>
+<p><a name="username"></a>
+<code>username</code> - Optional username to connect to MQTT</p>
+<p><a name="password"></a>
+<code>password</code> - Optional password to connect to MQTT</p>
 <h3>Constructors</h3>
 <table>
 <tbody>
@@ -17,7 +27,9 @@
 <p><a href="-init-.html">&lt;init&gt;</a></p>
 </td>
 <td>
-<code><span class="identifier">HomieMqttClient</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, org.homieiot.Device)/serverURI">serverURI</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, org.homieiot.Device)/clientID">clientID</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, org.homieiot.Device)/username">username</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, org.homieiot.Device)/password">password</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, org.homieiot.Device)/device">device</span><span class="symbol">:</span>&nbsp;<a href="../../org.homieiot/-device/index.html"><span class="identifier">Device</span></a><span class="symbol">)</span></code></td>
+<code><span class="identifier">HomieMqttClient</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, org.homieiot.Device)/serverURI">serverURI</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, org.homieiot.Device)/clientID">clientID</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, org.homieiot.Device)/username">username</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, org.homieiot.Device)/password">password</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient$<init>(kotlin.String, kotlin.String, kotlin.String, kotlin.String, org.homieiot.Device)/device">device</span><span class="symbol">:</span>&nbsp;<a href="../../org.homieiot/-device/index.html"><span class="identifier">Device</span></a><span class="symbol">)</span></code>
+<p>Creates a Homie MQTT client for the supplied <a href="../../org.homieiot/-device/index.html">org.homieiot.Device</a></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -29,14 +41,18 @@
 <p><a href="connect.html">connect</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">connect</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="http://docs.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html"><span class="identifier">Future</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">fun </span><span class="identifier">connect</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="http://docs.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html"><span class="identifier">Future</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code>
+<p>Connect client to MQTT library</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="disconnect.html">disconnect</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">disconnect</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">IMqttToken</span></code></td>
+<code><span class="keyword">fun </span><span class="identifier">disconnect</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">IMqttToken</span></code>
+<p>Disconnect MQTT Client</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -48,7 +64,11 @@
 <p><a href="from-env.html">fromEnv</a></p>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">fromEnv</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient.Companion$fromEnv(org.homieiot.Device)/device">device</span><span class="symbol">:</span>&nbsp;<a href="../../org.homieiot/-device/index.html"><span class="identifier">Device</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">HomieMqttClient</span></a></code></td>
+<code><span class="keyword">fun </span><span class="identifier">fromEnv</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.mqtt.HomieMqttClient.Companion$fromEnv(org.homieiot.Device)/device">device</span><span class="symbol">:</span>&nbsp;<a href="../../org.homieiot/-device/index.html"><span class="identifier">Device</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">HomieMqttClient</span></a></code>
+<p>Creates a new HomieMqttClient for the <a href="from-env.html#org.homieiot.mqtt.HomieMqttClient.Companion$fromEnv(org.homieiot.Device)/device">device</a> default environment variables
+The environment must contain an MQTT_SERVER URI in format of tcp://host:port and an MQTT_CLIENT_ID variable
+Additionally, the method supports extracting the MQTT_USERNAME and MQTT_PASSWORD environment variables</p>
+</td>
 </tr>
 </tbody>
 </table>

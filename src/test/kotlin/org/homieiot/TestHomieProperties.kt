@@ -3,6 +3,7 @@ package org.homieiot
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.homieiot.mqtt.HomiePublisher
 import org.junit.jupiter.api.Test
@@ -31,7 +32,14 @@ class TestHomieProperties {
 
     @Test
     fun `Test ID Format`() {
-        TODO("Not Implemented")
+        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            object : BaseProperty<Any>(id = "", name = "", parentPublisher = mockk(), unit = "", datatype = "", type = PropertyType.STATE, format = "") {
+                override fun propertyUpdateFromString(update: String): PropertyUpdate<Any> {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+            }
+        }
     }
 
 

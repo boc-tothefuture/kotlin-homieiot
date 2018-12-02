@@ -54,12 +54,12 @@ class TestHomieRGBProperties {
         rgbProperty.publishConfig()
 
         Assertions.assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("homie", "device", "node", "\$properties", payload = "rgb"),
-                messageFor("homie", "device", "node", "rgb", "\$name", payload = "foo"),
-                messageFor("homie", "device", "node", "rgb", "\$retained", payload = "false"),
-                messageFor("homie", "device", "node", "rgb", "\$settable", payload = "false"),
-                messageFor("homie", "device", "node", "rgb", "\$datatype", payload = "color"),
-                messageFor("homie", "device", "node", "rgb", "\$format", payload = "rgb")
+                messageFor("device", "node", "\$properties", payload = "rgb"),
+                messageFor("device", "node", "rgb", "\$name", payload = "foo"),
+                messageFor("device", "node", "rgb", "\$retained", payload = "false"),
+                messageFor("device", "node", "rgb", "\$settable", payload = "false"),
+                messageFor("device", "node", "rgb", "\$datatype", payload = "color"),
+                messageFor("device", "node", "rgb", "\$format", payload = "rgb")
         )
 
 

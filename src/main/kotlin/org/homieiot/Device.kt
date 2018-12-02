@@ -39,13 +39,13 @@ internal inline fun <T> simpleObservable(initialValue: T, crossinline onChange: 
  *
  * A device represents a physical piece of hardware. For example, an Arduino/ESP8266 or a coffee machine.
  *
- * A device is composed of one or more [org.homieiot.device.Node] objects.  Nodes are independent or logically separable parts of a device.
+ * A device is composed of one or more [org.homieiot.Node] objects.  Nodes are independent or logically separable parts of a device.
  *
- * Nodes are themselves composed by [org.homieiot.device.Property] objects.  Properties represent basic characteristics of the node/device, often given as numbers or finite states.
+ * Nodes are themselves composed by [org.homieiot.Property] objects.  Properties represent basic characteristics of the node/device, often given as numbers or finite states.
  *
  */
 @DeviceTagMarker
-class Device internal constructor(private val id: String, private val name: String = id, baseTopic: String = "homie") {
+class Device internal constructor(private val id: String, private val name: String = id) {
 
 
     /**
@@ -95,13 +95,17 @@ class Device internal constructor(private val id: String, private val name: Stri
         private const val STATE_SUB_TOPIC = "\$state"
     }
 
+    init {
+        idRequire(id)
+    }
+
     private val nodes = mutableMapOf<String, Node>()
 
-    private var state: InternalState by simpleObservable(InternalState.INIT) { publishState() }
+    internal var state: InternalState by simpleObservable(InternalState.INIT) { publishState() }
 
-    internal val publisher: RootHomiePublisher = RootHomiePublisher(topicParts = listOf(baseTopic, id))
+    internal val publisher: RootHomiePublisher = RootHomiePublisher(topicParts = listOf(id))
 
-    internal val stateTopic = listOf(baseTopic, id, STATE_SUB_TOPIC).joinToString("/")
+    internal val stateTopic = listOf(id, STATE_SUB_TOPIC).joinToString("/")
 
 
     /**
@@ -122,7 +126,7 @@ class Device internal constructor(private val id: String, private val name: Stri
      */
     internal fun publishConfig() = publishConfig(false)
 
-    internal val settablePropertyMap: Map<List<String>, Property<*>>
+    internal val settablePropertyMap: Map<List<String>, BaseProperty<*>>
         get() = nodes.values.flatMap { it.properties.values }.filter { it.settable }.associate { it.topicSegments + "set" to it }
 
 
@@ -161,7 +165,7 @@ class Device internal constructor(private val id: String, private val name: Stri
 
 
     /**
-     * Add a [org.homieiot.device.Node] to this device
+     * Add a [org.homieiot.Node] to this device
      *
      * @param id Each node must have a unique device ID which adheres to the [homie id convention](https://homieiot.github.io/specification/spec-core-v3_0_1/#topic-ids)
      * @param name Friendly name of the node
@@ -177,7 +181,7 @@ class Device internal constructor(private val id: String, private val name: Stri
     }
 
     /**
-     * Add a range of [org.homieiot.device.Node] to this device
+     * Add a range of [org.homieiot.Node] to this device
      *
      * @param id Each node must have a unique device ID which adheres to the [homie id convention](https://homieiot.github.io/specification/spec-core-v3_0_1/#topic-ids).
      * @param name Friendly name of the node

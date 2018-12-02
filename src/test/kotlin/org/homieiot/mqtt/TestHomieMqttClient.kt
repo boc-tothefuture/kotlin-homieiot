@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 
 class TestHomieMqttClient {
 
+
     @Rule
     val environmentVariables = EnvironmentVariables()
 

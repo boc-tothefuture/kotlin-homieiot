@@ -10,14 +10,10 @@ class TestDevice {
 
     @Test
     fun `Test ID Format`() {
-        TODO("Not Implemented")
+        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            Device(id = "", name = "bar")
+        }
     }
-
-    @Test
-    fun `Test Publishes Ready State`() {
-        TODO("Not Implemented")
-    }
-
 
     @Test
     fun `Test Publish Config`() {
@@ -36,11 +32,11 @@ class TestDevice {
         homieDevice.publishConfig()
 
         publisherMock.assertMessages(
-                messageFor("homie", "foo", "\$state", payload = "init"),
-                messageFor("homie", "foo", "\$homie", payload = "3.0.1"),
-                messageFor("homie", "foo", "\$name", payload = "foo"),
-                messageFor("homie", "foo", "\$implementation", payload = "kotlin-homie"),
-                messageFor("homie", "foo", "\$nodes", payload = "qux")
+                messageFor("foo", "\$state", payload = "init"),
+                messageFor("foo", "\$homie", payload = "3.0.1"),
+                messageFor("foo", "\$name", payload = "foo"),
+                messageFor("foo", "\$implementation", payload = "kotlin-homie"),
+                messageFor("foo", "\$nodes", payload = "qux")
         )
     }
 
@@ -86,17 +82,17 @@ class TestDevice {
         homieDevice.publishConfig(includeNodes = true)
 
         publisherMock.assertMessages(
-                messageFor("homie", "foo", "state".attr(), payload = "init"),
-                messageFor("homie", "foo", "homie".attr(), payload = "3.0.1"),
-                messageFor("homie", "foo", "name".attr(), payload = "foo"),
-                messageFor("homie", "foo", "implementation".attr(), payload = "kotlin-homie"),
-                messageFor("homie", "foo", "nodes".attr(), payload = "qux"),
-                messageFor("homie", "foo", "qux", "name".attr(), payload = "qux"),
-                messageFor("homie", "foo", "qux", "type".attr(), payload = "qoo"),
-                messageFor("homie", "foo", "qux", "properties".attr(), payload = "moo"),
-                messageFor("homie", "foo", "qux", "moo", "settable".attr(), payload = "false"),
-                messageFor("homie", "foo", "qux", "moo", "retained".attr(), payload = "true"),
-                messageFor("homie", "foo", "qux", "moo", "datatype".attr(), payload = "string")
+                messageFor("foo", "state".attr(), payload = "init"),
+                messageFor("foo", "homie".attr(), payload = "3.0.1"),
+                messageFor("foo", "name".attr(), payload = "foo"),
+                messageFor("foo", "implementation".attr(), payload = "kotlin-homie"),
+                messageFor("foo", "nodes".attr(), payload = "qux"),
+                messageFor("foo", "qux", "name".attr(), payload = "qux"),
+                messageFor("foo", "qux", "type".attr(), payload = "qoo"),
+                messageFor("foo", "qux", "properties".attr(), payload = "moo"),
+                messageFor("foo", "qux", "moo", "settable".attr(), payload = "false"),
+                messageFor("foo", "qux", "moo", "retained".attr(), payload = "true"),
+                messageFor("foo", "qux", "moo", "datatype".attr(), payload = "string")
         )
     }
 
@@ -133,7 +129,7 @@ class TestDevice {
     @Test
     fun `Test State Topic`() {
         val homieDevice = device(id = "foo", name = "bar") {}
-        assertThat(homieDevice.stateTopic).isEqualTo("homie/foo/\$state")
+        assertThat(homieDevice.stateTopic).isEqualTo("foo/\$state")
 
 
     }
@@ -150,7 +146,7 @@ class TestDevice {
 
         homieDevice.state(Device.State.READY)
 
-        publisherMock.assertMessages(messageFor("homie", "foo", "\$state",
+        publisherMock.assertMessages(messageFor("foo", "\$state",
                 payload = Device.InternalState.READY.toString()))
     }
 
@@ -169,13 +165,13 @@ class TestDevice {
 
         homieDevice.publishConfig()
 
-        assertThat(publisherMock.publishedMessages).contains(messageFor("homie", "foo", "\$nodes", payload = "qux"))
+        assertThat(publisherMock.publishedMessages).contains(messageFor("foo", "\$nodes", payload = "qux"))
 
         homieDevice.node(id = "hoo", type = "owl") {
             string(id = "hoot")
         }
 
-        assertThat(publisherMock.publishedMessages).contains(messageFor("homie", "foo", "\$nodes", payload = "qux,hoo"))
+        assertThat(publisherMock.publishedMessages).contains(messageFor("foo", "\$nodes", payload = "qux,hoo"))
 
     }
 

@@ -1,6 +1,7 @@
 package org.homieiot.mqtt
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.awaitility.Awaitility.await
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttMessage
@@ -27,10 +28,48 @@ class TestHomieMqttClient {
     @Container
     var mosquitto: GenericContainer<*> = GenericContainer<Nothing>("eclipse-mosquitto:1.5.4").withExposedPorts(1883)
 
+    @Test
+    fun `Only permits connect to be called once`() {
+
+        val device = device(id = "foo", name = "name") { }
+        homieClient(device) {
+            assertThatExceptionOfType(IllegalStateException::class.java).isThrownBy { it.connect() }
+        }
+    }
+
+
+    @Test
+    fun `Test Publishes Ready State`() {
+        val device = device(id = "foo", name = "name") { }
+        homieClient(device) {
+            val publishedMessage = getPublishedMessage("homie/foo/\$state").get(5, TimeUnit.SECONDS)
+            assertThat(publishedMessage).isEqualTo("ready")
+        }
+
+    }
+
+
+    @Test
+    fun `Test Supports Homie Base Topic`() {
+        val device = device(id = "foo", name = "name") { }
+        homieClient(device = device, baseTopic = "changed") {
+            val publishedMessage = getPublishedMessage("changed/foo/\$name").get(5, TimeUnit.SECONDS)
+            assertThat(publishedMessage).isEqualTo("name")
+        }
+    }
+
 
     @Test
     fun `Test sends disconnect message before shutdown`() {
-        TODO("Not Implemented")
+        val device = device(id = "foo", name = "name") { }
+        homieClient(device) { }
+        //Check multiple times until the disconnect value gets published
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted {
+            val publishedMessage = getPublishedMessage("homie/foo/\$state").get(5, TimeUnit.SECONDS)
+            println(publishedMessage)
+            assertThat(publishedMessage).isEqualTo("disconnected")
+        }
+        Thread.sleep(500) //Wait for the initial messages to publish
     }
 
     @Test
@@ -58,6 +97,7 @@ class TestHomieMqttClient {
         assertThat(connectFuture.isDone).isEqualTo(true)
 
     }
+
 
 
     @Test
@@ -101,13 +141,14 @@ class TestHomieMqttClient {
     }
 
 
-    fun clientID() = java.util.UUID.randomUUID().toString()
-    fun serverURI() = "tcp://${mosquitto.getContainerIpAddress()}:${mosquitto.getMappedPort(1883)}"
+    private fun clientID() = java.util.UUID.randomUUID().toString()
+    private fun serverURI() = "tcp://${mosquitto.getContainerIpAddress()}:${mosquitto.getMappedPort(1883)}"
 
-    fun homieClient(device: Device, init: (client: HomieMqttClient) -> Unit): Unit {
+    private fun homieClient(device: Device, baseTopic: String = "homie", init: (client: HomieMqttClient) -> Unit): Unit {
         assertThat(mosquitto.isRunning())
         val client = HomieMqttClient(serverURI = serverURI(),
                 clientID = clientID(),
+                homieRoot = baseTopic,
                 device = device)
         val connectFuture = client.connect()
         connectFuture.get(5, TimeUnit.SECONDS)
@@ -117,16 +158,16 @@ class TestHomieMqttClient {
     }
 
 
-    fun client() = MqttClient(serverURI(), clientID())
+    private fun client() = MqttClient(serverURI(), clientID())
 
-    fun publishMessage(topic: String, message: String) {
+    private fun publishMessage(topic: String, message: String) {
         client().apply {
             connect()
             publish(topic, MqttMessage(message.toByteArray()))
         }
     }
 
-    fun getPublishedMessage(topic: String): Future<String> {
+    private fun getPublishedMessage(topic: String): Future<String> {
         val futureMessage = CompletableFuture<String>()
 
         client().apply {

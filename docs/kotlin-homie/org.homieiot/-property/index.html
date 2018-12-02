@@ -9,6 +9,7 @@
 <br/>
 <h1>Property</h1>
 <code><span class="keyword">interface </span><span class="identifier">Property</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code>
+<p>A <a href="https://homieiot.github.io/specification/#properties">Homie Property</a></p>
 <h3>Properties</h3>
 <table>
 <tbody>
@@ -17,21 +18,18 @@
 <p><a href="id.html">id</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>Unique ID that conforms to <a href="https://homieiot.github.io/specification/#topic-ids">Homie convention for IDs</a></p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="name.html">name</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">name</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
-</tr>
-<tr>
-<td>
-<p><a href="unit.html">unit</a></p>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">name</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code>
+<p>User supplied friendly name for property</p>
 </td>
-<td>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">unit</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -43,14 +41,18 @@
 <p><a href="subscribe.html">subscribe</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">subscribe</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.Property$subscribe(kotlin.Function1((org.homieiot.PropertyUpdate((org.homieiot.Property.T)), kotlin.Unit)))/update">update</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-property-update/index.html"><span class="identifier">PropertyUpdate</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Property</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">subscribe</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.Property$subscribe(kotlin.Function1((org.homieiot.PropertyUpdate((org.homieiot.Property.T)), kotlin.Unit)))/update">update</span><span class="symbol">:</span>&nbsp;<span class="symbol">(</span><a href="../-property-update/index.html"><span class="identifier">PropertyUpdate</span></a><span class="symbol">&lt;</span><a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">&gt;</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Called when the controller sends a property update</p>
+</td>
 </tr>
 <tr>
 <td>
 <p><a href="update.html">update</a></p>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">update</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.Property$update(org.homieiot.Property.T)/t">t</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">update</span><span class="symbol">(</span><span class="identifier" id="org.homieiot.Property$update(org.homieiot.Property.T)/t">t</span><span class="symbol">:</span>&nbsp;<a href="index.html#T"><span class="identifier">T</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Submits an update to controller</p>
+</td>
 </tr>
 </tbody>
 </table>

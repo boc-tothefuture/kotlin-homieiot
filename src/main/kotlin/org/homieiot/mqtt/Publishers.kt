@@ -3,7 +3,7 @@ package org.homieiot.mqtt
 import mu.KotlinLogging
 
 
-interface HomiePublisher {
+internal interface HomiePublisher {
 
     fun topic(topicSegments: List<String>?): List<String>
 

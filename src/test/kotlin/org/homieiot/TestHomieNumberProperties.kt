@@ -49,12 +49,12 @@ class TestHomieNumberProperties {
         numberProperty.publishConfig()
 
         assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("homie", "device", "node", "\$properties", payload = "number"),
-                messageFor("homie", "device", "node", "number", "\$name", payload = "foo"),
-                messageFor("homie", "device", "node", "number", "\$retained", payload = "false"),
-                messageFor("homie", "device", "node", "number", "\$settable", payload = "false"),
-                messageFor("homie", "device", "node", "number", "\$datatype", payload = "integer"),
-                messageFor("homie", "device", "node", "number", "\$unit", payload = "bar")
+                messageFor("device", "node", "\$properties", payload = "number"),
+                messageFor("device", "node", "number", "\$name", payload = "foo"),
+                messageFor("device", "node", "number", "\$retained", payload = "false"),
+                messageFor("device", "node", "number", "\$settable", payload = "false"),
+                messageFor("device", "node", "number", "\$datatype", payload = "integer"),
+                messageFor("device", "node", "number", "\$unit", payload = "bar")
         )
 
     }
