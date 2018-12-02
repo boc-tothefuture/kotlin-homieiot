@@ -1,4 +1,5 @@
 # kotlin-homieiot
+[![Build Status](https://travis-ci.com/boc-tothefuture/kotlin-homieiot.svg?branch=master)](https://travis-ci.com/boc-tothefuture/kotlin-homieiot)
 
 This is a work in progress kotlin client implementation of the [homie protocol.](https://git.io/homieiot)
 
