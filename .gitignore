@@ -135,7 +135,6 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 gradle/
-gradlew
 gradlew.bat
 
 *-tcplocalhost*
