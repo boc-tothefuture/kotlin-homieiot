@@ -13,6 +13,9 @@
 <p>Connect client to MQTT library</p>
 <p>This method may only be called once and should be called when the application is ready to receive and send messages to the broker.
 Client will automatically reconnect if necessary.</p>
+<h3>Exceptions</h3>
+<p><a name="IllegalStateException"></a>
+<code>IllegalStateException</code> - If called more than once.</p>
 <p><strong>Return</strong><br/>
 Future that completes after connection to broker is complete.</p>
 </BODY>

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.net.URLClassLoader
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
@@ -26,7 +27,7 @@ class TestHomieMqttClient {
     val environmentVariables = EnvironmentVariables()
 
     @Container
-    var mosquitto: GenericContainer<*> = GenericContainer<Nothing>("eclipse-mosquitto:1.5.4").withExposedPorts(1883)
+    val mosquitto: GenericContainer<*> = GenericContainer<Nothing>("eclipse-mosquitto:1.5.4").withExposedPorts(1883)
 
     @Test
     fun `Only permits connect to be called once`() {
@@ -43,7 +44,9 @@ class TestHomieMqttClient {
         val device = device(id = "foo", name = "name") { }
         homieClient(device) {
             val publishedMessage = getPublishedMessage("homie/foo/\$state").get(5, TimeUnit.SECONDS)
-            assertThat(publishedMessage).isEqualTo("ready")
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted {
+                assertThat(publishedMessage).isEqualTo("ready")
+            }
         }
 
     }
@@ -85,6 +88,10 @@ class TestHomieMqttClient {
 
     @Test
     fun `Test MQTT Connection From Environment`() {
+
+        (ClassLoader.getSystemClassLoader() as URLClassLoader).urLs.forEach { println(it.file) }
+
+
         assertThat(mosquitto.isRunning())
         val device = device(id = "foo", name = "name") { }
 
