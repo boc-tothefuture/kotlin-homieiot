@@ -48,8 +48,26 @@ class TestHomieMqttClient {
                 assertThat(publishedMessage).isEqualTo("ready")
             }
         }
-
     }
+
+    @Test
+    fun `Test Publishes Config`() {
+        val device = device(id = "foo", name = "name") {
+            node(id = "node", type = "test") {
+                string(id = "foo", name = "test")
+            }
+        }
+        homieClient(device) {
+            val nodeMessage = getPublishedMessage("homie/foo/node/\$type").get(5, TimeUnit.SECONDS)
+            assertThat(nodeMessage).isEqualTo("test")
+            val property = getPublishedMessage("homie/foo/node/\$properties").get(5, TimeUnit.SECONDS)
+            assertThat(property).isEqualTo("foo")
+            val propertyName = getPublishedMessage("homie/foo/node/foo/\$name").get(5, TimeUnit.SECONDS)
+            assertThat(propertyName).isEqualTo("test")
+
+        }
+    }
+
 
 
     @Test
@@ -137,9 +155,11 @@ class TestHomieMqttClient {
             }
         }
 
+
         val update = "foo"
 
         homieClient(device) {
+            assertThat(getPublishedMessage("homie/foo/node/bar/\$settable").get(5, TimeUnit.SECONDS)).isEqualTo("true")
             publishMessage("homie/foo/node/bar/set", update)
             await().atMost(5, TimeUnit.SECONDS).untilAsserted {
                 assertThat(propertyUpdate).isEqualTo(update)

@@ -67,6 +67,7 @@ class HomieMqttClient(serverURI: String,
     private val connectOptions = MqttConnectOptions().apply {
         isAutomaticReconnect = true
         isCleanSession = false
+        maxInflight = 1000
         this@HomieMqttClient.username?.let { userName = it }
         this@HomieMqttClient.password?.let { password = it.toCharArray() }
         setWill("$homieRoot/${device.stateTopic}", Device.InternalState.LOST.toString().toLowerCase().mqttPayload(), QUALITY_OF_SERVICE, true)
@@ -75,7 +76,7 @@ class HomieMqttClient(serverURI: String,
 
     private fun MqttAsyncClient.connectFuture(): Future<Any> {
         val listener = ConnectListener()
-        this.connect(connectOptions, listener)
+        this.connect(connectOptions, null, listener)
         return listener.connectionFuture
     }
 
@@ -108,7 +109,7 @@ class HomieMqttClient(serverURI: String,
      */
     fun disconnect() {
         device.state = Device.InternalState.DISCONNECTED
-        client.disconnect(5)
+        client.disconnect(5000)
         client.close()
     }
 
@@ -139,7 +140,7 @@ class HomieMqttClient(serverURI: String,
         override fun connectComplete(reconnect: Boolean, serverURI: String) {
             val connectType = if (reconnect) "Reconnection" else "Connection"
             logger.debug { "$connectType to $serverURI complete" }
-            device.publishConfig()
+            device.publishConfig(true)
             this@HomieMqttClient.subscribe()
         }
 
