@@ -171,7 +171,10 @@ class TestHomieMqttClient {
         client().apply {
             connect()
             publish(topic, MqttMessage(message.toByteArray()))
+            disconnect(5000)
+            close()
         }
+
     }
 
     private fun getPublishedMessage(topic: String): Future<String> {
