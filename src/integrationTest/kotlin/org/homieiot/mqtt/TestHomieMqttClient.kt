@@ -43,8 +43,8 @@ class TestHomieMqttClient {
     fun `Test Publishes Ready State`() {
         val device = device(id = "foo", name = "name") { }
         homieClient(device) {
-            val publishedMessage = getPublishedMessage("homie/foo/\$state").get(5, TimeUnit.SECONDS)
             await().atMost(5, TimeUnit.SECONDS).untilAsserted {
+                val publishedMessage = getPublishedMessage("homie/foo/\$state").get(5, TimeUnit.SECONDS)
                 assertThat(publishedMessage).isEqualTo("ready")
             }
         }
