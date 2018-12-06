@@ -1,4 +1,14 @@
 language: java
 
 script:
-  - ./gradlew check --info
+- "./gradlew check dokka --info"
+
+deploy:
+  provider: pages
+  local-dir: docs/
+  skip-cleanup: true
+  github-token: "$GITHUB_TOKEN"
+
+env:
+  global:
+    secure: YfmAQNTo5ZQ2DHxCw7Mpw7vm4/NYeaI+gseZqQkLth2AWWqCVsrPymA4c1hzuMFtn8mu7j33Tqi7KMIyK08HXTJgrfb1Qg6EfbMUPPUGOXs0RH6aG7Plb6Z4cHQf6gEmhcrUy4ULWG3BQoThAUgNXet4gwmRjJZFUNyQlp6SCFZU4PMN482ncRXN8sPirRFSXyTQLDFQXAZWqixv4sotlL0ZMVC3re3RKv0krk8lBKYXYfsc9jUupX3AAfVqzqxPRnlYaTKrt765+ZxBJ9BTuamYS/UJ/E2sQ3G7fYyr7EC+VQKrPLnRbtxrnd8+Al0O7KSV+75aYkhjuh7z8hHt7I/mrNbzfhU84uuQukHhdoqoi91/5ax8HNi+QzreNDRZX/G/Jxh7RcfMg/Hbko0gCt4UAGTIQeSREalgpHUT5M6XO1K5PXDNLJeQeFuOsIUcjDl0q7csbVUjg+a4cEF5IpJyYkLdWf3XLxQ4SviO9gx270W2Cmcw/UN/+tQv/inZLcOfaASmepBFEA8zvDg2LlsQeKTALeWy9opvi6rnp6+oGfs6JkIfDECsIj5i0MFBRTtuY+tVEwl1fFk+GqaxzgsZhOLUYsqPzPOFnpmQfpfIk7guNvbWz3lA8Sx8sH2gtj+WwCTq0w91YOjnFJI878hHhjiPOVBxReXGqACnFw8=
