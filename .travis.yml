@@ -1,7 +1,10 @@
 language: java
+jdk:
+- oraclejdk8
 
 script:
 - "./gradlew check dokka --info"
+- "./gradlew assemble"
 
 deploy:
   provider: pages
