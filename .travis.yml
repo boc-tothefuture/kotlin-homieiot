@@ -9,15 +9,13 @@ before_deploy:
 - "./gradlew generatePomFileForMavenPublication"
 
 deploy:
-  provider: pages
-  local-dir: docs/
-  skip-cleanup: true
-  github-token: "$GITHUB_TOKEN"
-
-deploy:
-  provider: bintray
-  file: "descriptor.json"
-  user: "$BINTRAY_API_USER"
-  key: "$BINTRAY_API_KEY"
-  skip-cleanup: true
-  dry-run: true
+  - provider: pages
+    local-dir: docs/
+    skip-cleanup: true
+    github-token: "$GITHUB_TOKEN"
+  - provider: bintray
+    file: "descriptor.json"
+    user: "$BINTRAY_API_USER"
+    key: "$BINTRAY_API_KEY"
+    skip-cleanup: true
+    dry-run: true
