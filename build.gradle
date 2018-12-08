@@ -15,22 +15,11 @@ plugins {
 }
 
 group 'org.boctothefuture'
-version '0.1'
+version '0.0.1'
 
 repositories {
     mavenCentral()
 }
-
-/*
-sourceSets {
-    create("integrationTest") {
-        kotlin.srcDir("src/integrationTest/kotlin")
-        resources.srcDir("src/integrationTest/resources")
-        compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
-        runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
-    }
-}
-*/
 
 sourceSets {
     integrationTest {
@@ -58,8 +47,6 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
     compile 'io.github.microutils:kotlin-logging:1.4.9'
-    compile 'ch.qos.logback:logback-classic:1.1.3'
-    compile 'ch.qos.logback:logback-core:1.1.3'
     testCompile(
             "org.assertj:assertj-core:3.11.1",
             "com.github.stefanbirkner:system-rules:1.17.2"
@@ -70,7 +57,9 @@ dependencies {
             "io.mockk:mockk:1.8.10.kotlin13"
     )
     testRuntimeOnly(
-            'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+            'org.junit.jupiter:junit-jupiter-engine:5.3.1',
+            'ch.qos.logback:logback-classic:1.1.3',
+            'ch.qos.logback:logback-core:1.1.3'
     )
     integrationTestImplementation(
             'org.testcontainers:junit-jupiter:1.10.1',
@@ -79,7 +68,9 @@ dependencies {
             'org.junit.jupiter:junit-jupiter-engine:5.3.1',
             'org.junit.jupiter:junit-jupiter-api:5.3.1',
             'org.junit.jupiter:junit-jupiter-params:5.3.1',
-            "io.mockk:mockk:1.8.10.kotlin13"
+            "io.mockk:mockk:1.8.10.kotlin13",
+            'ch.qos.logback:logback-classic:1.1.3',
+            'ch.qos.logback:logback-core:1.1.3'
     )
 }
 
