@@ -1,0 +1,33 @@
+{
+  "package": {
+    "name": "kotlin-homie",
+    "repo": "maven",
+    "subject": "boc-tothefuture",
+    "desc": "Kotlin implementation of the homie-iot library",
+    "website_url": "https://github.com/boc-tothefuture/kotlin-homieiot",
+    "issue_tracker_url": "https://github.com/boc-tothefuture/kotlin-homieiot/issues",
+    "vcs_url": "https://github.com/boc-tothefuture/kotlin-homieiot",
+    "licenses": [
+      "Apache-2.0"
+    ],
+    "labels": [
+      "kotlin",
+      "homie",
+      "gradle"
+    ],
+    "public_download_numbers": false,
+    "public_stats": false
+  },
+  "version": {
+    "name": "0.0.1",
+    "released": "2018-12-07",
+    "gpgSign": false
+  },
+  "files": [
+    {
+      "includePattern": "build/libs/(.*)",
+      "uploadPattern": "org/boctothefuture/kotlin-homie/0.0.1/$1"
+    }
+  ],
+  "publish": true
+}

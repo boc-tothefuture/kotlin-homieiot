@@ -3,8 +3,10 @@ jdk:
 - oraclejdk8
 
 script:
-- "./gradlew check dokka --info"
-- "./gradlew assemble"
+- "./gradlew check dokka assemble --info"
+
+before_deploy:
+- "./gradlew generatePomFileForMavenPublication"
 
 deploy:
   provider: pages
@@ -12,3 +14,9 @@ deploy:
   skip-cleanup: true
   github-token: "$GITHUB_TOKEN"
 
+deploy:
+  provider: bintray
+  file: "descriptor.json"
+  user: $BINTRAY_API_USER
+  key: $BINTRAY_API_KEY
+  dry-run: true
