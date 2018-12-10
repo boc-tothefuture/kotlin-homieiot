@@ -26,8 +26,8 @@ Processed environment variables include:
 | ------------- |-----------------------| -----     | 
 | MQTT_SERVER   | Format is tcp://host:port  | Yes  |
 | MQTT_CLIENT_ID  | [Client ID](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_7.1.0/com.ibm.mq.doc/tt60310_.htm)  | Yes  |
-| MQTT_USERNAME | Username for MQTT      |   NO |
-| MQTT_PASSWORD | Password for MQTT |    NO |
+| MQTT_USERNAME | Username for MQTT      |   No |
+| MQTT_PASSWORD | Password for MQTT |    No |
 
 
 
