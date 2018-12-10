@@ -1,6 +1,7 @@
 # kotlin-homieiot [![Build Status](https://travis-ci.com/boc-tothefuture/kotlin-homieiot.svg?branch=master)](https://travis-ci.com/boc-tothefuture/kotlin-homieiot) [![Apache License V.2](https://img.shields.io/badge/license-Apache%20V.2-blue.svg)](https://github.com/boc-tothefuture/kotlin-homieiot/edit/master/LICENSE)
 
-This is a kotlin client implementation of the [homie protocol.](https://git.io/homieiot)
+An opinionated kotlin client implementation of the [homie IoT protocol.](https://git.io/homieiot)
+A convenient library utilizing [eclipse paho](https://www.eclipse.org/paho/) for MQTT communication.
 
 # Example
 This library provides a kotlin-dsl to support the homieiot protocol.
