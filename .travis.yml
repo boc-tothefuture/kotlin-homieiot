@@ -10,7 +10,7 @@ before_deploy:
 
 deploy:
   - provider: pages
-    local-dir: docs/
+    local-dir: build/docs/
     skip-cleanup: true
     github-token: "$GITHUB_TOKEN"
   - provider: bintray
