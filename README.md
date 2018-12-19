@@ -1,4 +1,4 @@
-# kotlin-homieiot [![Build Status](https://travis-ci.com/boc-tothefuture/kotlin-homieiot.svg?branch=master)](https://travis-ci.com/boc-tothefuture/kotlin-homieiot) [![Apache License V.2](https://img.shields.io/badge/license-Apache%20V.2-blue.svg)](https://github.com/boc-tothefuture/kotlin-homieiot/edit/master/LICENSE)
+# kotlin-homieiot [![Build Status](https://travis-ci.com/boc-tothefuture/kotlin-homieiot.svg?branch=master)](https://travis-ci.com/boc-tothefuture/kotlin-homieiot) [![Apache License V.2](https://img.shields.io/badge/license-Apache%20V.2-blue.svg)](https://github.com/boc-tothefuture/kotlin-homieiot/edit/master/LICENSE) [![Maven Central](https://img.shields.io/maven-central/v/io.github.boc-tothefuture/kotlin-homie.svg)](https://search.maven.org/search?q=kotlin-homie) 
 
 An opinionated Kotlin client implementation of the [homie IoT protocol](https://git.io/homieiot)
 utilizing [eclipse paho](https://www.eclipse.org/paho/) for MQTT communication.
