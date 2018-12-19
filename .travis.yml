@@ -7,17 +7,8 @@ install: true
 script:
 - "./gradlew check dokka assemble -x signArchives --info"
 
-before_deploy:
-- "./gradlew generatePomFileForMavenPublication"
-
 deploy:
   - provider: pages
     local-dir: build/docs/
     skip-cleanup: true
     github-token: "$GITHUB_TOKEN"
-  - provider: bintray
-    file: "descriptor.json"
-    user: "$BINTRAY_API_USER"
-    key: "$BINTRAY_API_KEY"
-    skip-cleanup: true
-    dry-run: false
