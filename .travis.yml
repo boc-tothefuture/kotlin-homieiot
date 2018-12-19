@@ -3,7 +3,7 @@ jdk:
 - oraclejdk8
 
 script:
-- "./gradlew check dokka assemble --info"
+- "./gradlew check dokka assemble -x signArchives --info"
 
 before_deploy:
 - "./gradlew generatePomFileForMavenPublication"
