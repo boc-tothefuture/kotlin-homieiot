@@ -31,7 +31,7 @@ class TestDevice {
 
         homieDevice.publishConfig()
 
-        publisherMock.assertMessages(
+        publisherMock.assertContainsExactly(
                 messageFor("foo", "\$state", payload = "init"),
                 messageFor("foo", "\$homie", payload = "3.0.1"),
                 messageFor("foo", "\$name", payload = "foo"),
@@ -57,13 +57,22 @@ class TestDevice {
     fun `Test Node Range`() {
         var invokeCount = 0
         val range = 1..6
-        device(id = "foo", name = "foo") {
+        val homieDevice = device(id = "foo", name = "foo") {
             node(id = "qux", type = "qoo", range = range) {
                 invokeCount++
             }
         }
         assertThat(invokeCount).isEqualTo(range.endInclusive)
 
+        val publisherMock = MqttPublisherMock()
+
+        homieDevice.publisher.mqttPublisher = publisherMock.mqttPublisher
+
+        homieDevice.publishConfig(includeNodes = false)
+
+        publisherMock.assertContains(
+                messageFor("foo", "nodes".attr(), payload = "qux-1,qux-2,qux-3,qux-4,qux-5,qux-6")
+        )
     }
 
     @Test
@@ -81,7 +90,7 @@ class TestDevice {
 
         homieDevice.publishConfig(includeNodes = true)
 
-        publisherMock.assertMessages(
+        publisherMock.assertContainsExactly(
                 messageFor("foo", "state".attr(), payload = "init"),
                 messageFor("foo", "homie".attr(), payload = "3.0.1"),
                 messageFor("foo", "name".attr(), payload = "foo"),
@@ -146,7 +155,7 @@ class TestDevice {
 
         homieDevice.state(Device.State.READY)
 
-        publisherMock.assertMessages(messageFor("foo", "\$state",
+        publisherMock.assertContainsExactly(messageFor("foo", "\$state",
                 payload = Device.InternalState.READY.toString()))
     }
 

@@ -19,7 +19,7 @@ plugins {
 def username = hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('ossrhUsername')
 def password = hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('ossrhPassword')
 
-project.ext.version = "0.0.1"
+project.ext.version = "0.0.2"
 
 group 'io.github.boc-tothefuture'
 version project.ext.version

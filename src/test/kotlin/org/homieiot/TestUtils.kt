@@ -26,9 +26,14 @@ internal class MqttPublisherMock {
         } just Runs
     }
 
-    internal fun assertMessages(vararg messages: HomieMqttMessage) {
+    internal fun assertContainsExactly(vararg messages: HomieMqttMessage) {
         assertThat(publishedMessages).containsExactlyInAnyOrderElementsOf(messages.toList())
     }
+
+    internal fun assertContains(vararg messages: HomieMqttMessage) {
+        assertThat(publishedMessages).containsAll(messages.toList())
+    }
+
 }
 
 internal class PublisherFake {
