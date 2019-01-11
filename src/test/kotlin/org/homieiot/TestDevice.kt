@@ -71,7 +71,7 @@ class TestDevice {
         homieDevice.publishConfig(includeNodes = false)
 
         publisherMock.assertContains(
-                messageFor("foo", "nodes".attr(), payload = "qux-1,qux-2,qux-3,qux-4,qux-5,qux-6")
+                messageFor("foo", "nodes".attr(), payload = "qux1,qux2,qux3,qux4,qux5,qux6")
         )
     }
 
