@@ -191,7 +191,7 @@ class Device internal constructor(private val id: String, private val name: Stri
      */
     fun node(id: String, type: String, name: String = id, range: IntRange, init: Node.(index: Int) -> Unit) {
         range.forEach { index ->
-            val node = Node(id = "id-$index", type = type, name = name, parentPublisher = publisher)
+            val node = Node(id = "$id$index", type = type, name = name, parentPublisher = publisher)
             node.init(index)
             addNode(node)
         }
