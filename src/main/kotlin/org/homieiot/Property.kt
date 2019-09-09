@@ -56,7 +56,7 @@ enum class PropertyType {
 internal abstract class BaseProperty<T>(final override val id: String,
                                         final override val name: String?,
                                         parentPublisher: HomiePublisher,
-                                        type: PropertyType,
+                                        private val type: PropertyType,
                                         val unit: String?,
                                         val datatype: String,
                                         val format: String?) : Property<T> {
@@ -81,7 +81,7 @@ internal abstract class BaseProperty<T>(final override val id: String,
 
 
     override fun update(t: T) {
-        if (t != lastValue) {
+        if (type == PropertyType.EVENT || t != lastValue) {
             publisher.publishMessage(payload = valueToString(t))
             lastValue = t
         }
