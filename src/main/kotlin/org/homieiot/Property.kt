@@ -29,7 +29,6 @@ interface Property<T> {
     fun subscribe(update: (PropertyUpdate<T>) -> Unit)
 }
 
-
 /**
  * A property update delivered from MQTT
  *
@@ -53,14 +52,15 @@ enum class PropertyType {
     EVENT
 }
 
-internal abstract class BaseProperty<T>(final override val id: String,
-                                        final override val name: String?,
-                                        parentPublisher: HomiePublisher,
-                                        private val type: PropertyType,
-                                        val unit: String?,
-                                        val datatype: String,
-                                        val format: String?) : Property<T> {
-
+internal abstract class BaseProperty<T>(
+    final override val id: String,
+    final override val name: String?,
+    parentPublisher: HomiePublisher,
+    private val type: PropertyType,
+    val unit: String?,
+    val datatype: String,
+    val format: String?
+) : Property<T> {
 
     init {
         idRequire(id)
@@ -79,7 +79,6 @@ internal abstract class BaseProperty<T>(final override val id: String,
 
     internal val retained = type == PropertyType.STATE
 
-
     override fun update(t: T) {
         if (type == PropertyType.EVENT || t != lastValue) {
             publisher.publishMessage(payload = valueToString(t))
@@ -94,7 +93,6 @@ internal abstract class BaseProperty<T>(final override val id: String,
     }
 
     abstract fun propertyUpdateFromString(update: String): PropertyUpdate<T>
-
 
     internal fun publishConfig() {
         name?.let { publisher.publishMessage("\$name", payload = it) }
@@ -113,15 +111,15 @@ internal abstract class BaseProperty<T>(final override val id: String,
         this.observer = update
         publishSettable()
     }
-
 }
 
-
-internal class StringProperty(id: String,
-                              name: String? = null,
-                              parentPublisher: HomiePublisher,
-                              type: PropertyType = PropertyType.STATE,
-                              unit: String? = null) : BaseProperty<String>(
+internal class StringProperty(
+    id: String,
+    name: String? = null,
+    parentPublisher: HomiePublisher,
+    type: PropertyType = PropertyType.STATE,
+    unit: String? = null
+) : BaseProperty<String>(
         id = id,
         name = name,
         unit = unit,
@@ -133,14 +131,15 @@ internal class StringProperty(id: String,
     override fun propertyUpdateFromString(update: String): PropertyUpdate<String> = PropertyUpdate(this, update)
 }
 
-
-internal abstract class AbstractNumberProperty<T : Comparable<T>>(id: String,
-                                                                  name: String?,
-                                                                  parentPublisher: HomiePublisher,
-                                                                  type: PropertyType = PropertyType.STATE,
-                                                                  datatype: String,
-                                                                  unit: String? = null,
-                                                                  private val range: ClosedRange<T>?) : BaseProperty<T>(
+internal abstract class AbstractNumberProperty<T : Comparable<T>>(
+    id: String,
+    name: String?,
+    parentPublisher: HomiePublisher,
+    type: PropertyType = PropertyType.STATE,
+    datatype: String,
+    unit: String? = null,
+    private val range: ClosedRange<T>?
+) : BaseProperty<T>(
         id = id,
         name = name,
         parentPublisher = parentPublisher,
@@ -155,13 +154,14 @@ internal abstract class AbstractNumberProperty<T : Comparable<T>>(id: String,
     }
 }
 
-
-internal class NumberProperty(id: String,
-                              name: String?,
-                              parentPublisher: HomiePublisher,
-                              type: PropertyType = PropertyType.STATE,
-                              unit: String? = null,
-                              range: LongRange?) : AbstractNumberProperty<Long>(
+internal class NumberProperty(
+    id: String,
+    name: String?,
+    parentPublisher: HomiePublisher,
+    type: PropertyType = PropertyType.STATE,
+    unit: String? = null,
+    range: LongRange?
+) : AbstractNumberProperty<Long>(
         id = id,
         name = name,
         type = type,
@@ -173,13 +173,14 @@ internal class NumberProperty(id: String,
     override fun propertyUpdateFromString(update: String): PropertyUpdate<Long> = PropertyUpdate(this, update.toLong())
 }
 
-
-internal class FloatProperty(id: String,
-                             name: String?,
-                             parentPublisher: HomiePublisher,
-                             type: PropertyType = PropertyType.STATE,
-                             unit: String? = null,
-                             range: ClosedRange<Double>?) : AbstractNumberProperty<Double>(
+internal class FloatProperty(
+    id: String,
+    name: String?,
+    parentPublisher: HomiePublisher,
+    type: PropertyType = PropertyType.STATE,
+    unit: String? = null,
+    range: ClosedRange<Double>?
+) : AbstractNumberProperty<Double>(
 
         id = id,
         name = name,
@@ -192,14 +193,14 @@ internal class FloatProperty(id: String,
     override fun propertyUpdateFromString(update: String): PropertyUpdate<Double> = PropertyUpdate(this, update.toDouble())
 }
 
-
-internal class EnumProperty<E : Enum<E>>(id: String,
-                                         name: String?,
-                                         parentPublisher: HomiePublisher,
-                                         type: PropertyType = PropertyType.STATE,
-                                         unit: String? = null,
-                                         enumValues: List<String>,
-                                         private val enumMap: Map<String, E>
+internal class EnumProperty<E : Enum<E>>(
+    id: String,
+    name: String?,
+    parentPublisher: HomiePublisher,
+    type: PropertyType = PropertyType.STATE,
+    unit: String? = null,
+    enumValues: List<String>,
+    private val enumMap: Map<String, E>
 ) : BaseProperty<E>(
         id = id,
         name = name,
@@ -215,11 +216,12 @@ internal class EnumProperty<E : Enum<E>>(id: String,
     }
 }
 
-
-internal class BoolProperty(id: String,
-                            name: String?,
-                            parentPublisher: HomiePublisher,
-                            type: PropertyType = PropertyType.STATE) : BaseProperty<Boolean>(
+internal class BoolProperty(
+    id: String,
+    name: String?,
+    parentPublisher: HomiePublisher,
+    type: PropertyType = PropertyType.STATE
+) : BaseProperty<Boolean>(
         id = id,
         name = name,
         type = type,
@@ -231,12 +233,13 @@ internal class BoolProperty(id: String,
     override fun propertyUpdateFromString(update: String): PropertyUpdate<Boolean> = PropertyUpdate(this, update.toBoolean())
 }
 
-
-internal abstract class AbstractColorProperty<T> internal constructor(id: String,
-                                                                      name: String?,
-                                                                      parentPublisher: HomiePublisher,
-                                                                      type: PropertyType = PropertyType.STATE,
-                                                                      colorType: String) : BaseProperty<T>(
+internal abstract class AbstractColorProperty<T> internal constructor(
+    id: String,
+    name: String?,
+    parentPublisher: HomiePublisher,
+    type: PropertyType = PropertyType.STATE,
+    colorType: String
+) : BaseProperty<T>(
         id = id,
         name = name,
         type = type,
@@ -249,15 +252,14 @@ internal abstract class AbstractColorProperty<T> internal constructor(id: String
         val (first, second, third) = string.split(',').map { it.toInt() }
         return Triple(first, second, third)
     }
-
-
 }
 
-
-internal class HSVColorProperty(id: String,
-                                name: String?,
-                                parentPublisher: HomiePublisher,
-                                type: PropertyType = PropertyType.STATE) : AbstractColorProperty<HSV>(
+internal class HSVColorProperty(
+    id: String,
+    name: String?,
+    parentPublisher: HomiePublisher,
+    type: PropertyType = PropertyType.STATE
+) : AbstractColorProperty<HSV>(
         id = id,
         name = name,
         type = type,
@@ -266,15 +268,15 @@ internal class HSVColorProperty(id: String,
 
     override fun propertyUpdateFromString(update: String): PropertyUpdate<HSV> = PropertyUpdate(this, HSV(parseColorString(update)))
 
-
     override fun valueToString(value: HSV): String = "${value.hue},${value.saturation},${value.value}"
-
 }
 
-internal class RGBColorProperty(id: String,
-                                name: String?,
-                                parentPublisher: HomiePublisher,
-                                type: PropertyType = PropertyType.STATE) : AbstractColorProperty<RGB>(
+internal class RGBColorProperty(
+    id: String,
+    name: String?,
+    parentPublisher: HomiePublisher,
+    type: PropertyType = PropertyType.STATE
+) : AbstractColorProperty<RGB>(
         id = id,
         name = name,
         type = type,
@@ -285,4 +287,3 @@ internal class RGBColorProperty(id: String,
 
     override fun propertyUpdateFromString(update: String): PropertyUpdate<RGB> = PropertyUpdate(this, RGB(parseColorString(update)))
 }
-

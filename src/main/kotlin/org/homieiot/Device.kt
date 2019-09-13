@@ -5,13 +5,11 @@ import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-
 /**
  * @suppress
  */
 @DslMarker
 annotation class DeviceTagMarker
-
 
 /**
  * Converts the string to a homie attribute by prepending it with $
@@ -19,7 +17,6 @@ annotation class DeviceTagMarker
 internal fun String.homieAttribute(): String {
     return "\$$this"
 }
-
 
 /**
  * Simple Observable that invokes lambda with no parameters when a value changes.
@@ -34,7 +31,6 @@ internal inline fun <T> simpleObservable(initialValue: T, crossinline onChange: 
             override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange()
         }
 
-
 /**
  *
  * A device represents a physical piece of hardware. For example, an Arduino/ESP8266 or a coffee machine.
@@ -46,7 +42,6 @@ internal inline fun <T> simpleObservable(initialValue: T, crossinline onChange: 
  */
 @DeviceTagMarker
 class Device internal constructor(private val id: String, private val name: String = id) {
-
 
     /**
      * The current state of the device.
@@ -70,7 +65,6 @@ class Device internal constructor(private val id: String, private val name: Stri
          */
         ALERT
     }
-    
 
     /**
      * Representation of the state that the homie convention supports for devices.
@@ -107,7 +101,6 @@ class Device internal constructor(private val id: String, private val name: Stri
 
     internal val stateTopic = listOf(id, STATE_SUB_TOPIC).joinToString("/")
 
-
     /**
      * Publish the devices and optionally the nodes/properties configuration.
      * @param includeNodes If true, the nodes and properties of those nodes have their configuration also published
@@ -129,7 +122,6 @@ class Device internal constructor(private val id: String, private val name: Stri
     internal val settablePropertyMap: Map<List<String>, BaseProperty<*>>
         get() = nodes.values.flatMap { it.properties.values }.filter { it.settable }.associate { it.topicSegments + "set" to it }
 
-
     /**
      * Publish the current state of the device
      */
@@ -149,7 +141,6 @@ class Device internal constructor(private val id: String, private val name: Stri
         nodes[node.id] = node
     }
 
-
     /**
      * Set the [state] based on the state of the physical or virtual device.
      */
@@ -160,9 +151,7 @@ class Device internal constructor(private val id: String, private val name: Stri
             State.DISCONNECTED -> this.state = InternalState.DISCONNECTED
             State.SLEEPING -> this.state = InternalState.SLEEPING
         }
-
     }
-
 
     /**
      * Add a [org.homieiot.Node] to this device
@@ -197,9 +186,7 @@ class Device internal constructor(private val id: String, private val name: Stri
         }
         publishNodes()
     }
-
 }
-
 
 /**
  * Create a new device instance
@@ -214,4 +201,3 @@ fun device(id: String, name: String = id, init: Device.() -> Unit): Device {
     device.init()
     return device
 }
-
