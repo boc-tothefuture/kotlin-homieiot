@@ -15,12 +15,13 @@ class TestHomieRGBProperties {
 
         property.publishConfig()
 
-        Assertions.assertThat(publisherMock.messagePairs).containsAll(listOf(
+        Assertions.assertThat(publisherMock.messagePairs).containsAll(
+            listOf(
                 Triple("foo" / "datatype".attr(), "color", true),
                 Triple("foo" / "format".attr(), "rgb", true)
-        ))
+            )
+        )
     }
-
 
     @Test
     fun `Test Data Type Projection`() {
@@ -31,38 +32,35 @@ class TestHomieRGBProperties {
         val property = RGBColorProperty(id = "foo", name = "bar", parentPublisher = publisherMock.publisher)
         property.subscribe { messageReceived = it.update }
 
-
         val message = RGB(50, 50, 50)
         property.mqttReceived("50,50,50")
         Assertions.assertThat(messageReceived).isNotNull.isEqualTo(message)
         publisherMock.messagePairs.clear()
 
         property.update(RGB(100, 100, 100))
-        Assertions.assertThat(publisherMock.messagePairs).hasSize(1).last().isEqualTo(Triple("foo", "100,100,100", true))
+        Assertions.assertThat(publisherMock.messagePairs).hasSize(1).last()
+            .isEqualTo(Triple("foo", "100,100,100", true))
     }
-
 
     @Test
     fun `Test DSL Function`() {
 
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var rgbProperty: BaseProperty<RGB> = node.rgb(id = "rgb", type = PropertyType.EVENT, name = "foo") as BaseProperty<RGB>
+        val rgbProperty: BaseProperty<RGB> =
+            node.rgb(id = "rgb", type = PropertyType.EVENT, name = "foo") as BaseProperty<RGB>
 
         Assertions.assertThat(rgbProperty).isNotNull
 
         rgbProperty.publishConfig()
 
         Assertions.assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("device", "node", "\$properties", payload = "rgb"),
-                messageFor("device", "node", "rgb", "\$name", payload = "foo"),
-                messageFor("device", "node", "rgb", "\$retained", payload = "false"),
-                messageFor("device", "node", "rgb", "\$settable", payload = "false"),
-                messageFor("device", "node", "rgb", "\$datatype", payload = "color"),
-                messageFor("device", "node", "rgb", "\$format", payload = "rgb")
+            messageFor("device", "node", "\$properties", payload = "rgb"),
+            messageFor("device", "node", "rgb", "\$name", payload = "foo"),
+            messageFor("device", "node", "rgb", "\$retained", payload = "false"),
+            messageFor("device", "node", "rgb", "\$settable", payload = "false"),
+            messageFor("device", "node", "rgb", "\$datatype", payload = "color"),
+            messageFor("device", "node", "rgb", "\$format", payload = "rgb")
         )
-
-
     }
-
 }

@@ -26,10 +26,10 @@ internal fun String.homieAttribute(): String {
  *
  */
 internal inline fun <T> simpleObservable(initialValue: T, crossinline onChange: () -> Unit):
-        ReadWriteProperty<Any?, T> =
-        object : ObservableProperty<T>(initialValue) {
-            override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange()
-        }
+    ReadWriteProperty<Any?, T> =
+    object : ObservableProperty<T>(initialValue) {
+        override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange()
+    }
 
 /**
  *
@@ -120,7 +120,7 @@ class Device internal constructor(private val id: String, private val name: Stri
     internal fun publishConfig() = publishConfig(false)
 
     internal val settablePropertyMap: Map<List<String>, BaseProperty<*>>
-        get() = nodes.values.flatMap { it.properties.values }.filter { it.settable }.associate { it.topicSegments + "set" to it }
+        get() = nodes.values.flatMap { it.properties.values }.filter { it.settable }.associateBy { it.topicSegments + "set" }
 
     /**
      * Publish the current state of the device
@@ -133,11 +133,13 @@ class Device internal constructor(private val id: String, private val name: Stri
      * Publish the list of nodes for this device
      */
     private fun publishNodes() {
-        publisher.publishMessage(topicSegment = "nodes".homieAttribute(), payload = nodes.values.joinToString(",") { it.id })
+        publisher.publishMessage(
+            topicSegment = "nodes".homieAttribute(),
+            payload = nodes.values.joinToString(",") { it.id })
     }
 
     private fun addNode(node: Node) {
-        if (nodes.containsKey(node.id)) throw IllegalArgumentException("Duplicate node IDs are not allowed - duplicate id ($node.id)")
+        require(!nodes.containsKey(node.id)) { "Duplicate node IDs are not allowed - duplicate id ($node.id)" }
         nodes[node.id] = node
     }
 

@@ -15,12 +15,13 @@ class TestHomieHSVProperties {
 
         property.publishConfig()
 
-        Assertions.assertThat(publisherMock.messagePairs).containsAll(listOf(
+        Assertions.assertThat(publisherMock.messagePairs).containsAll(
+            listOf(
                 Triple("foo" / "datatype".attr(), "color", true),
                 Triple("foo" / "format".attr(), "hsv", true)
-        ))
+            )
+        )
     }
-
 
     @Test
     fun `Test Data Type Projection`() {
@@ -31,38 +32,35 @@ class TestHomieHSVProperties {
         val property = HSVColorProperty(id = "foo", name = "bar", parentPublisher = publisherMock.publisher)
         property.subscribe { messageReceived = it.update }
 
-
         val message = HSV(50, 50, 50)
         property.mqttReceived("50,50,50")
         Assertions.assertThat(messageReceived).isNotNull.isEqualTo(message)
         publisherMock.messagePairs.clear()
 
         property.update(HSV(100, 100, 100))
-        Assertions.assertThat(publisherMock.messagePairs).hasSize(1).last().isEqualTo(Triple("foo", "100,100,100", true))
+        Assertions.assertThat(publisherMock.messagePairs).hasSize(1).last()
+            .isEqualTo(Triple("foo", "100,100,100", true))
     }
-
 
     @Test
     fun `Test DSL Function`() {
 
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var hsvProperty: BaseProperty<HSV> = node.hsv(id = "hsv", type = PropertyType.EVENT, name = "foo") as BaseProperty
+        val hsvProperty: BaseProperty<HSV> =
+            node.hsv(id = "hsv", type = PropertyType.EVENT, name = "foo") as BaseProperty
 
         Assertions.assertThat(hsvProperty).isNotNull
 
         hsvProperty.publishConfig()
 
         Assertions.assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("device", "node", "\$properties", payload = "hsv"),
-                messageFor("device", "node", "hsv", "\$name", payload = "foo"),
-                messageFor("device", "node", "hsv", "\$retained", payload = "false"),
-                messageFor("device", "node", "hsv", "\$settable", payload = "false"),
-                messageFor("device", "node", "hsv", "\$datatype", payload = "color"),
-                messageFor("device", "node", "hsv", "\$format", payload = "hsv")
+            messageFor("device", "node", "\$properties", payload = "hsv"),
+            messageFor("device", "node", "hsv", "\$name", payload = "foo"),
+            messageFor("device", "node", "hsv", "\$retained", payload = "false"),
+            messageFor("device", "node", "hsv", "\$settable", payload = "false"),
+            messageFor("device", "node", "hsv", "\$datatype", payload = "color"),
+            messageFor("device", "node", "hsv", "\$format", payload = "hsv")
         )
-
-
     }
-
 }

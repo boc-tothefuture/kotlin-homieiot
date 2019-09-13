@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 
 class TestHomieStringProperties {
 
-
     @Test
     fun `Test Property Config`() {
 
@@ -16,9 +15,11 @@ class TestHomieStringProperties {
 
         property.publishConfig()
 
-        Assertions.assertThat(publisherMock.messagePairs).containsAll(listOf(
+        Assertions.assertThat(publisherMock.messagePairs).containsAll(
+            listOf(
                 Triple("foo" / "datatype".attr(), "string", true)
-        ))
+            )
+        )
     }
 
     @Test
@@ -32,7 +33,7 @@ class TestHomieStringProperties {
 
         val message = "Hello, World"
         prop.mqttReceived(message)
-        Assertions.assertThat(messageReceived).isNotNull().isEqualTo(message)
+        assertThat(messageReceived).isNotNull().isEqualTo(message)
 
         publisher.messagePairs.clear()
 
@@ -40,26 +41,23 @@ class TestHomieStringProperties {
         Assertions.assertThat(publisher.messagePairs).hasSize(1).last().isEqualTo(Triple("foo", "baz", true))
     }
 
-
     @Test
     fun `Test DSL`() {
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var stringProperty: BaseProperty<String> = node.string(id = "string", type = PropertyType.EVENT, name = "foo", unit = "bar") as BaseProperty<String>
+        val stringProperty: BaseProperty<String> =
+            node.string(id = "string", type = PropertyType.EVENT, name = "foo", unit = "bar") as BaseProperty<String>
 
         assertThat(stringProperty).isNotNull
         stringProperty.publishConfig()
 
         assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("device", "node", "\$properties", payload = "string"),
-                messageFor("device", "node", "string", "\$name", payload = "foo"),
-                messageFor("device", "node", "string", "\$retained", payload = "false"),
-                messageFor("device", "node", "string", "\$settable", payload = "false"),
-                messageFor("device", "node", "string", "\$datatype", payload = "string"),
-                messageFor("device", "node", "string", "\$unit", payload = "bar")
+            messageFor("device", "node", "\$properties", payload = "string"),
+            messageFor("device", "node", "string", "\$name", payload = "foo"),
+            messageFor("device", "node", "string", "\$retained", payload = "false"),
+            messageFor("device", "node", "string", "\$settable", payload = "false"),
+            messageFor("device", "node", "string", "\$datatype", payload = "string"),
+            messageFor("device", "node", "string", "\$unit", payload = "bar")
         )
-
     }
-
-
 }

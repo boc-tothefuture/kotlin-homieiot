@@ -19,18 +19,21 @@ private class TestHomieEnumProperties {
         val publisher = PublisherFake()
         val values = enumValues<TestEnum>().map { it.name }
         val map = enumValues<TestEnum>().associateBy { it.name }
-        val property = EnumProperty(id = "foo", name = "bar", parentPublisher = publisher.publisher,
-                enumValues = values,
-                enumMap = map)
+        val property = EnumProperty(
+            id = "foo", name = "bar", parentPublisher = publisher.publisher,
+            enumValues = values,
+            enumMap = map
+        )
 
         property.publishConfig()
 
-        assertThat(publisher.messagePairs).containsAll(listOf(
+        assertThat(publisher.messagePairs).containsAll(
+            listOf(
                 Triple("foo" / "datatype".attr(), "enum", true),
                 Triple("foo" / "format".attr(), values.joinToString(","), true)
-        ))
+            )
+        )
     }
-
 
     @Test
     fun `Test Data Type Projection`() {
@@ -40,7 +43,13 @@ private class TestHomieEnumProperties {
 
         val values = enumValues<TestEnum>().map { it.name }.toList()
         val map = enumValues<TestEnum>().associateBy { it.name }
-        val property = EnumProperty(id = "foo", name = "bar", enumValues = values, parentPublisher = publisher.publisher, enumMap = map)
+        val property = EnumProperty(
+            id = "foo",
+            name = "bar",
+            enumValues = values,
+            parentPublisher = publisher.publisher,
+            enumMap = map
+        )
         property.subscribe { messageReceived = it.update }
 
         val message = TestEnum.EAST
@@ -57,7 +66,13 @@ private class TestHomieEnumProperties {
 
         val values = enumValues<TestEnum>().map { it.name }.toList()
         val map = enumValues<TestEnum>().associateBy { it.name }
-        val property = EnumProperty(id = "foo", name = "bar", enumValues = values, parentPublisher = publisher.publisher, enumMap = map)
+        val property = EnumProperty(
+            id = "foo",
+            name = "bar",
+            enumValues = values,
+            parentPublisher = publisher.publisher,
+            enumMap = map
+        )
         property.subscribe { it.update }
 
         assertThatExceptionOfType(NoSuchElementException::class.java).isThrownBy {
@@ -70,23 +85,21 @@ private class TestHomieEnumProperties {
 
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var enumProperty: BaseProperty<TestEnum> = node.enum<TestEnum>(id = "enum", type = PropertyType.EVENT, name = "foo", unit = "bar") as BaseProperty
+        val enumProperty: BaseProperty<TestEnum> =
+            node.enum<TestEnum>(id = "enum", type = PropertyType.EVENT, name = "foo", unit = "bar") as BaseProperty
 
         assertThat(enumProperty).isNotNull
 
         enumProperty.publishConfig()
 
         assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("device", "node", "\$properties", payload = "enum"),
-                messageFor("device", "node", "enum", "\$name", payload = "foo"),
-                messageFor("device", "node", "enum", "\$retained", payload = "false"),
-                messageFor("device", "node", "enum", "\$settable", payload = "false"),
-                messageFor("device", "node", "enum", "\$datatype", payload = "enum"),
-                messageFor("device", "node", "enum", "\$format", payload = "NORTH,SOUTH,EAST,WEST"),
-                messageFor("device", "node", "enum", "\$unit", payload = "bar")
+            messageFor("device", "node", "\$properties", payload = "enum"),
+            messageFor("device", "node", "enum", "\$name", payload = "foo"),
+            messageFor("device", "node", "enum", "\$retained", payload = "false"),
+            messageFor("device", "node", "enum", "\$settable", payload = "false"),
+            messageFor("device", "node", "enum", "\$datatype", payload = "enum"),
+            messageFor("device", "node", "enum", "\$format", payload = "NORTH,SOUTH,EAST,WEST"),
+            messageFor("device", "node", "enum", "\$unit", payload = "bar")
         )
-
     }
-
-
 }

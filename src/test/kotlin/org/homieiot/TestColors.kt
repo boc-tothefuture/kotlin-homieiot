@@ -1,6 +1,5 @@
 package org.homieiot
 
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.homieiot.colors.HSV
@@ -9,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
 class TestColors {
-
 
     @ParameterizedTest
     @CsvSource("0,0,0", "100,100,100", "50,50,50")
@@ -44,7 +42,6 @@ class TestColors {
         }
     }
 
-
     @ParameterizedTest
     @CsvSource("0,0,0", "255,255,255", "50,50,50")
     fun `Test in RGB Range`(red: Int, green: Int, blue: Int) {
@@ -55,10 +52,8 @@ class TestColors {
     @CsvSource("-1,0,0", "256,50,50", "50,-1,50", "50,256,50", "50,50,-1", "50,50,256")
     fun `Test out of RGB Range`(red: Int, green: Int, blue: Int) {
 
-        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+        assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
             RGB(red = red, green = green, blue = blue)
         }
     }
-
-
 }

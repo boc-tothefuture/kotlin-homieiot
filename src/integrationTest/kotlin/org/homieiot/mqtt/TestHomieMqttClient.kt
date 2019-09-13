@@ -19,7 +19,6 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
-
 @Testcontainers
 class TestHomieMqttClient {
 
@@ -30,7 +29,7 @@ class TestHomieMqttClient {
     val mosquitto: GenericContainer<*> = GenericContainer<Nothing>("eclipse-mosquitto:1.5.4").withExposedPorts(1883)
 
     @Test
-    fun `Only permits connect to be called once`() {
+    fun `only permits connect to be called once`() {
 
         val device = device(id = "foo", name = "name") { }
         homieClient(device) {
@@ -38,9 +37,8 @@ class TestHomieMqttClient {
         }
     }
 
-
     @Test
-    fun `Test Publishes Ready State`() {
+    fun `test publishes ready state`() {
         val device = device(id = "foo", name = "name") { }
         homieClient(device) {
             await().atMost(5, TimeUnit.SECONDS).untilAsserted {
@@ -51,7 +49,7 @@ class TestHomieMqttClient {
     }
 
     @Test
-    fun `Test Publishes Config`() {
+    fun `test publishes config`() {
         val device = device(id = "foo", name = "name") {
             node(id = "node", type = "test") {
                 string(id = "foo", name = "test")
@@ -68,10 +66,8 @@ class TestHomieMqttClient {
         }
     }
 
-
-
     @Test
-    fun `Test Supports Homie Base Topic`() {
+    fun `test supports homie base topic`() {
         val device = device(id = "foo", name = "name") { }
         homieClient(device = device, baseTopic = "changed") {
             val publishedMessage = getPublishedMessage("changed/foo/\$name").get(5, TimeUnit.SECONDS)
@@ -79,9 +75,8 @@ class TestHomieMqttClient {
         }
     }
 
-
     @Test
-    fun `Test sends disconnect message before shutdown`() {
+    fun `test sends disconnect message before shutdown`() {
         val device = device(id = "foo", name = "name") { }
         homieClient(device) { }
         //Check multiple times until the disconnect value gets published
@@ -94,10 +89,10 @@ class TestHomieMqttClient {
     }
 
     @Test
-    fun `Test MQTT Connection`() {
+    fun `test MQTT connection`() {
         val device = device(id = "foo", name = "name") {
         }
-        var run: Boolean = false
+        var run = false
         homieClient(device) {
             run = true
         }
@@ -105,7 +100,7 @@ class TestHomieMqttClient {
     }
 
     @Test
-    fun `Test MQTT Connection From Environment`() {
+    fun `test MQTT connection From environment`() {
 
         (ClassLoader.getSystemClassLoader() as URLClassLoader).urLs.forEach { println(it.file) }
 
@@ -120,13 +115,10 @@ class TestHomieMqttClient {
         val connectFuture = client.connect()
         connectFuture.get(5, TimeUnit.SECONDS)
         assertThat(connectFuture.isDone).isEqualTo(true)
-
     }
 
-
-
     @Test
-    fun `Test Homie Publish Update`() {
+    fun `test homie publish update`() {
         var property: Property<String>? = null
         val device = device(id = "foo", name = "name") {
             node(id = "node", type = "type", name = "name") {
@@ -143,9 +135,8 @@ class TestHomieMqttClient {
         }
     }
 
-
     @Test
-    fun `Test Mqtt Publish Update`() {
+    fun `test MQTT publish update`() {
         var propertyUpdate: String? = null
         val device = device(id = "foo", name = "name") {
             node(id = "node", type = "type", name = "name") {
@@ -154,7 +145,6 @@ class TestHomieMqttClient {
                 }
             }
         }
-
 
         val update = "foo"
 
@@ -167,23 +157,27 @@ class TestHomieMqttClient {
         }
     }
 
-
     private fun clientID() = java.util.UUID.randomUUID().toString()
     private fun serverURI() = "tcp://${mosquitto.getContainerIpAddress()}:${mosquitto.getMappedPort(1883)}"
 
-    private fun homieClient(device: Device, baseTopic: String = "homie", init: (client: HomieMqttClient) -> Unit): Unit {
+    private fun homieClient(
+        device: Device,
+        baseTopic: String = "homie",
+        init: (client: HomieMqttClient) -> Unit
+    ) {
         assertThat(mosquitto.isRunning())
-        val client = HomieMqttClient(serverURI = serverURI(),
-                clientID = clientID(),
-                homieRoot = baseTopic,
-                device = device)
+        val client = HomieMqttClient(
+            serverURI = serverURI(),
+            clientID = clientID(),
+            homieRoot = baseTopic,
+            device = device
+        )
         val connectFuture = client.connect()
         connectFuture.get(5, TimeUnit.SECONDS)
         assertThat(connectFuture.isDone).isEqualTo(true)
         init(client)
         client.disconnect()
     }
-
 
     private fun client() = MqttClient(serverURI(), clientID())
 
@@ -194,7 +188,6 @@ class TestHomieMqttClient {
             disconnect(5000)
             close()
         }
-
     }
 
     private fun getPublishedMessage(topic: String): Future<String> {
@@ -208,6 +201,4 @@ class TestHomieMqttClient {
         }
         return futureMessage
     }
-
-
 }
