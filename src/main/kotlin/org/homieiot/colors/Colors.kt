@@ -2,7 +2,6 @@ package org.homieiot.colors
 
 import org.homieiot.containsOrThrow
 
-
 /**
  * A color model represented as three values: [hue], [saturation], and [value]
  *
@@ -17,7 +16,6 @@ data class HSV(val hue: Int, val saturation: Int, val value: Int) {
      * @constructor Create a color model using a triple, the first value is [hue], the second is [saturation] and the third is [value]
      */
     constructor(triple: Triple<Int, Int, Int>) : this(triple.first, triple.second, triple.third)
-
 
     init {
         HUE_RANGE.containsOrThrow(hue)
@@ -37,8 +35,8 @@ data class HSV(val hue: Int, val saturation: Int, val value: Int) {
  *
  * @constructor Create a color model based on [red], [green] and [blue] values
  * @property red The amount of red in the color model. Valid values are from 0 to 255.
- * @property green  The amount of green in the color model. Valid values are from 0 to 255.
- * @property blue  The amount of blue in the color model. Valid values are from 0 to 255.
+ * @property green The amount of green in the color model. Valid values are from 0 to 255.
+ * @property blue The amount of blue in the color model. Valid values are from 0 to 255.
  */
 data class RGB(val red: Int, val green: Int, val blue: Int) {
 

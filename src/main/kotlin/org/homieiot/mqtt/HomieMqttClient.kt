@@ -7,7 +7,6 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicInteger
 
-
 /**
  * Creates a Homie MQTT client for the supplied [org.homieiot.Device]
  *
@@ -16,12 +15,14 @@ import java.util.concurrent.atomic.AtomicInteger
  * @param [username] Optional username to connect to MQTT
  * @param [password] Optional password to connect to MQTT
  */
-class HomieMqttClient(serverURI: String,
-                      clientID: String,
-                      private val username: String? = null,
-                      private val password: String? = null,
-                      private val homieRoot: String = "homie",
-                      private val device: Device) {
+class HomieMqttClient(
+    serverURI: String,
+    clientID: String,
+    private val username: String? = null,
+    private val password: String? = null,
+    private val homieRoot: String = "homie",
+    private val device: Device
+) {
 
     companion object {
         private const val QUALITY_OF_SERVICE: Int = 1
@@ -30,7 +31,6 @@ class HomieMqttClient(serverURI: String,
         private const val MQTT_CLIENT_ID: String = "MQTT_CLIENT_ID"
         private const val MQTT_USERNAME: String = "MQTT_USERNAME"
         private const val MQTT_PASSWORD: String = "MQTT_PASSWORD"
-
 
         /**
          * Creates a new HomieMqttClient for the [device] default environment variables
@@ -50,7 +50,6 @@ class HomieMqttClient(serverURI: String,
                     device = device)
         }
     }
-
 
     private val connectLatch = AtomicInteger(1)
 
@@ -73,13 +72,11 @@ class HomieMqttClient(serverURI: String,
         setWill("$homieRoot/${device.stateTopic}", Device.InternalState.LOST.toString().toLowerCase().mqttPayload(), QUALITY_OF_SERVICE, true)
     }
 
-
     private fun MqttAsyncClient.connectFuture(): Future<Any> {
         val listener = ConnectListener()
         this.connect(connectOptions, null, listener)
         return listener.connectionFuture
     }
-
 
     /**
      * Connect client to MQTT library
@@ -112,7 +109,6 @@ class HomieMqttClient(serverURI: String,
         client.disconnect(5000)
         client.close()
     }
-
 
     private fun subscribe() {
         settablePropertyMap.entries.forEach { (topic, property) ->
@@ -156,6 +152,4 @@ class HomieMqttClient(serverURI: String,
             token.topics.forEach { logger.debug { "Message delivered on topic ($it)" } }
         }
     }
-
-
 }
