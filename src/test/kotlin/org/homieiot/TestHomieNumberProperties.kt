@@ -15,9 +15,11 @@ class TestHomieNumberProperties {
 
         property.publishConfig()
 
-        assertThat(publisherMock.messagePairs).containsAll(listOf(
+        assertThat(publisherMock.messagePairs).containsAll(
+            listOf(
                 Triple("foo/\$datatype", "integer", true)
-        ))
+            )
+        )
     }
 
     @Test
@@ -37,26 +39,25 @@ class TestHomieNumberProperties {
         assertThat(publisher.messagePairs).last().isEqualTo(Triple("foo", "100", true))
     }
 
-
     @Test
     fun `Test DSL Function`() {
 
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var numberProperty: BaseProperty<Long> = node.number(id = "number", type = PropertyType.EVENT, name = "foo", unit = "bar") as BaseProperty
+        val numberProperty: BaseProperty<Long> =
+            node.number(id = "number", type = PropertyType.EVENT, name = "foo", unit = "bar") as BaseProperty
 
         assertThat(numberProperty).isNotNull
         numberProperty.publishConfig()
 
         assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("device", "node", "\$properties", payload = "number"),
-                messageFor("device", "node", "number", "\$name", payload = "foo"),
-                messageFor("device", "node", "number", "\$retained", payload = "false"),
-                messageFor("device", "node", "number", "\$settable", payload = "false"),
-                messageFor("device", "node", "number", "\$datatype", payload = "integer"),
-                messageFor("device", "node", "number", "\$unit", payload = "bar")
+            messageFor("device", "node", "\$properties", payload = "number"),
+            messageFor("device", "node", "number", "\$name", payload = "foo"),
+            messageFor("device", "node", "number", "\$retained", payload = "false"),
+            messageFor("device", "node", "number", "\$settable", payload = "false"),
+            messageFor("device", "node", "number", "\$datatype", payload = "integer"),
+            messageFor("device", "node", "number", "\$unit", payload = "bar")
         )
-
     }
 
     @Test
@@ -64,18 +65,18 @@ class TestHomieNumberProperties {
 
         val publisherMock = PublisherFake()
 
-        val property = NumberProperty(id = "foo", name = "bar", parentPublisher = publisherMock.publisher, range = 10..15L)
+        val property =
+            NumberProperty(id = "foo", name = "bar", parentPublisher = publisherMock.publisher, range = 10..15L)
         property.publishConfig()
 
-        assertThat(publisherMock.messagePairs).containsAll(listOf(
+        assertThat(publisherMock.messagePairs).containsAll(
+            listOf(
                 Triple("foo/\$format", "10:15", true)
-        ))
+            )
+        )
 
         assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
             property.update(16)
         }
-
-
     }
-
 }

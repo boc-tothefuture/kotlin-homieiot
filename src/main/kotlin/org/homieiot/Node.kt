@@ -10,7 +10,12 @@ import org.homieiot.mqtt.HomiePublisher
  * Nodes are independent or logically separable parts of a device. For example, a car might expose a wheels node, an engine node and a lights node.
  *
  */
-class Node internal constructor(internal val id: String, private val name: String = id, private val type: String, parentPublisher: HomiePublisher) {
+class Node internal constructor(
+    internal val id: String,
+    private val name: String = id,
+    private val type: String,
+    parentPublisher: HomiePublisher
+) {
 
     init {
         idRequire(id)
@@ -31,9 +36,7 @@ class Node internal constructor(internal val id: String, private val name: Strin
 
     internal fun <T> addProperty(property: BaseProperty<T>, init: Property<T>.() -> Unit): Property<T> {
         property.init()
-        if (_properties.containsKey(property.id)) {
-            throw IllegalArgumentException("Duplicate properties IDs are not allowed - duplicate id ($property.id)")
-        }
+        require(!_properties.containsKey(property.id)) { "Duplicate properties IDs are not allowed - duplicate id ($property.id)" }
         _properties[property.id] = property
         publishProperties()
         return property
@@ -52,7 +55,10 @@ class Node internal constructor(internal val id: String, private val name: Strin
     internal fun publishConfig() = publishConfig(false)
 
     private fun publishProperties() {
-        publisher.publishMessage("properties".homieAttribute(), payload = _properties.keys.joinToString(separator = ","))
+        publisher.publishMessage(
+            "properties".homieAttribute(),
+            payload = _properties.keys.joinToString(separator = ",")
+        )
     }
 
     /**
@@ -72,7 +78,15 @@ class Node internal constructor(internal val id: String, private val name: Strin
         init: ((Property<String>.() -> Unit)) = {}
     ): Property<String> {
 
-        return addProperty(StringProperty(id = id, name = name, type = type, parentPublisher = this.publisher, unit = unit), init)
+        return addProperty(
+            StringProperty(
+                id = id,
+                name = name,
+                type = type,
+                parentPublisher = this.publisher,
+                unit = unit
+            ), init
+        )
     }
 
     /**
@@ -93,7 +107,16 @@ class Node internal constructor(internal val id: String, private val name: Strin
         range: LongRange? = null,
         init: ((Property<Long>.() -> Unit)) = {}
     ): Property<Long> {
-        return addProperty(NumberProperty(id = id, name = name, type = type, unit = unit, parentPublisher = this.publisher, range = range), init)
+        return addProperty(
+            NumberProperty(
+                id = id,
+                name = name,
+                type = type,
+                unit = unit,
+                parentPublisher = this.publisher,
+                range = range
+            ), init
+        )
     }
 
     /**
@@ -114,7 +137,16 @@ class Node internal constructor(internal val id: String, private val name: Strin
         range: ClosedFloatingPointRange<Double>? = null,
         init: ((Property<Double>.() -> Unit)) = {}
     ): Property<Double> {
-        return addProperty(FloatProperty(id = id, name = name, type = type, unit = unit, parentPublisher = this.publisher, range = range), init)
+        return addProperty(
+            FloatProperty(
+                id = id,
+                name = name,
+                type = type,
+                unit = unit,
+                parentPublisher = this.publisher,
+                range = range
+            ), init
+        )
     }
 
     /**
@@ -185,16 +217,21 @@ class Node internal constructor(internal val id: String, private val name: Strin
         noinline init: ((Property<E>.() -> Unit)) = {}
     ): Property<E> {
 
-        return enumGenerator.enum(id = id, name = name, type = type, unit = unit,
-                enumValues = enumValues<E>().map { it.name },
-                enumMap = enumValues<E>().associateBy { it.name },
-                init = init)
+        return enumGenerator.enum(
+            id = id, name = name, type = type, unit = unit,
+            enumValues = enumValues<E>().map { it.name },
+            enumMap = enumValues<E>().associateBy { it.name },
+            init = init
+        )
     }
 
     /**
      * @suppress
      */
-    inner class InternalEnumGenerator internal constructor(private val publisher: HomiePublisher, private val properties: MutableMap<String, BaseProperty<*>>) {
+    inner class InternalEnumGenerator internal constructor(
+        private val publisher: HomiePublisher,
+        private val properties: MutableMap<String, BaseProperty<*>>
+    ) {
 
         /**
          * Internal method that is public to support the fact that creating enums in the node class uses inline reified generics
@@ -210,9 +247,11 @@ class Node internal constructor(internal val id: String, private val name: Strin
             init: ((Property<E>.() -> Unit)) = {}
         ): Property<E> {
 
-            val property = EnumProperty(id = id, name = name, type = type, unit = unit,
-                    parentPublisher = this.publisher, enumValues = enumValues,
-                    enumMap = enumMap) as BaseProperty<E>
+            val property = EnumProperty(
+                id = id, name = name, type = type, unit = unit,
+                parentPublisher = this.publisher, enumValues = enumValues,
+                enumMap = enumMap
+            ) as BaseProperty<E>
             return addProperty(property, init)
         }
     }

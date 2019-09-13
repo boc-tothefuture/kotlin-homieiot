@@ -1,6 +1,5 @@
 package org.homieiot.mqtt
 
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.homieiot.MqttPublisherMock
 import org.homieiot.messageFor
@@ -22,7 +21,6 @@ class TestHomiePublishers {
         assertThat(publisher.topic(listOf("baz"))).isEqualTo(listOf("foo", "bar", "baz"))
     }
 
-
     @Test
     fun `Test Retained`() {
         val rootPublisher = RootPublisherMock()
@@ -43,8 +41,12 @@ class TestHomiePublishers {
 
         rootPublisher.rootPublisher.publishMessage(payload = "bar")
 
-        Assertions.assertThat(rootPublisher.publisherMock.publishedMessages).containsExactlyInAnyOrder(messageFor("foo", payload = "bar"))
-
+        assertThat(rootPublisher.publisherMock.publishedMessages).containsExactlyInAnyOrder(
+            messageFor(
+                "foo",
+                payload = "bar"
+            )
+        )
     }
 
     @Test
@@ -54,7 +56,13 @@ class TestHomiePublishers {
 
         val publisher = HierarchicalHomiePublisher(rootPublisher.rootPublisher, listOf("bar"))
         publisher.publishMessage(payload = "baz")
-        assertThat(rootPublisher.publisherMock.publishedMessages).containsExactly(messageFor("foo", "bar", payload = "baz"))
+        assertThat(rootPublisher.publisherMock.publishedMessages).containsExactly(
+            messageFor(
+                "foo",
+                "bar",
+                payload = "baz"
+            )
+        )
     }
 
     @Test
@@ -65,7 +73,14 @@ class TestHomiePublishers {
         val publisherOne = HierarchicalHomiePublisher(rootPublisher.rootPublisher, listOf("bar"))
         val publisherTwo = HierarchicalHomiePublisher(publisherOne, listOf("baz"))
         publisherTwo.publishMessage(payload = "qux")
-        assertThat(rootPublisher.publisherMock.publishedMessages).containsExactly(messageFor("foo", "bar", "baz", payload = "qux"))
+        assertThat(rootPublisher.publisherMock.publishedMessages).containsExactly(
+            messageFor(
+                "foo",
+                "bar",
+                "baz",
+                payload = "qux"
+            )
+        )
     }
 
     private class RootPublisherMock {
@@ -78,7 +93,5 @@ class TestHomiePublishers {
         init {
             rootPublisher.mqttPublisher = publisherMock.mqttPublisher
         }
-
     }
-
 }

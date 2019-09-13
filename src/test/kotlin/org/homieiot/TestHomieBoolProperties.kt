@@ -14,11 +14,12 @@ class TestHomieBoolProperties {
 
         property.publishConfig()
 
-        Assertions.assertThat(publisherMock.messagePairs).containsAll(listOf(
+        Assertions.assertThat(publisherMock.messagePairs).containsAll(
+            listOf(
                 Triple("foo" / "datatype".attr(), "boolean", true)
-        ))
+            )
+        )
     }
-
 
     @Test
     fun `Test Data Type Projection`() {
@@ -28,7 +29,6 @@ class TestHomieBoolProperties {
 
         val property = BoolProperty(id = "foo", name = "bar", parentPublisher = publisherMock.publisher)
         property.subscribe { messageReceived = it.update }
-
 
         val message = true
         property.mqttReceived(message.toString())
@@ -42,27 +42,24 @@ class TestHomieBoolProperties {
         Assertions.assertThat(publisherMock.messagePairs).hasSize(1).last().isEqualTo(Triple("foo", "false", true))
     }
 
-
     @Test
     fun `Test DSL Function`() {
 
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var boolProperty: BaseProperty<Boolean> = node.bool(id = "bool", type = PropertyType.EVENT, name = "foo") as BaseProperty<Boolean>
+        val boolProperty: BaseProperty<Boolean> =
+            node.bool(id = "bool", type = PropertyType.EVENT, name = "foo") as BaseProperty<Boolean>
 
         Assertions.assertThat(boolProperty).isNotNull
 
         boolProperty.publishConfig()
 
         Assertions.assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("device", "node", "\$properties", payload = "bool"),
-                messageFor("device", "node", "bool", "\$name", payload = "foo"),
-                messageFor("device", "node", "bool", "\$retained", payload = "false"),
-                messageFor("device", "node", "bool", "\$settable", payload = "false"),
-                messageFor("device", "node", "bool", "\$datatype", payload = "boolean")
+            messageFor("device", "node", "\$properties", payload = "bool"),
+            messageFor("device", "node", "bool", "\$name", payload = "foo"),
+            messageFor("device", "node", "bool", "\$retained", payload = "false"),
+            messageFor("device", "node", "bool", "\$settable", payload = "false"),
+            messageFor("device", "node", "bool", "\$datatype", payload = "boolean")
         )
-
-
     }
-
 }

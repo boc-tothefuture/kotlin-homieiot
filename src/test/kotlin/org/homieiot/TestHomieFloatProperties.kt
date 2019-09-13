@@ -15,9 +15,11 @@ class TestHomieFloatProperties {
 
         property.publishConfig()
 
-        assertThat(publisherMock.messagePairs).containsAll(listOf(
+        assertThat(publisherMock.messagePairs).containsAll(
+            listOf(
                 Triple("foo" / "datatype".attr(), "float", true)
-        ))
+            )
+        )
     }
 
     @Test
@@ -37,26 +39,25 @@ class TestHomieFloatProperties {
         assertThat(publisher.messagePairs).last().isEqualTo(Triple("foo", "100.0", true))
     }
 
-
     @Test
     fun `Test DSL Function`() {
 
         val nodeFake = NodeFake()
         val node = nodeFake.node()
-        var numberProperty: BaseProperty<Double> = node.float(id = "float", type = PropertyType.EVENT, name = "foo", unit = "bar") as BaseProperty
+        val numberProperty: BaseProperty<Double> =
+            node.float(id = "float", type = PropertyType.EVENT, name = "foo", unit = "bar") as BaseProperty
 
         assertThat(numberProperty).isNotNull
         numberProperty.publishConfig()
 
         assertThat(nodeFake.publishedMessages).containsExactlyInAnyOrder(
-                messageFor("device", "node", "\$properties", payload = "float"),
-                messageFor("device", "node", "float", "\$name", payload = "foo"),
-                messageFor("device", "node", "float", "\$retained", payload = "false"),
-                messageFor("device", "node", "float", "\$settable", payload = "false"),
-                messageFor("device", "node", "float", "\$datatype", payload = "float"),
-                messageFor("device", "node", "float", "\$unit", payload = "bar")
+            messageFor("device", "node", "\$properties", payload = "float"),
+            messageFor("device", "node", "float", "\$name", payload = "foo"),
+            messageFor("device", "node", "float", "\$retained", payload = "false"),
+            messageFor("device", "node", "float", "\$settable", payload = "false"),
+            messageFor("device", "node", "float", "\$datatype", payload = "float"),
+            messageFor("device", "node", "float", "\$unit", payload = "bar")
         )
-
     }
 
     @Test
@@ -64,18 +65,18 @@ class TestHomieFloatProperties {
 
         val publisherMock = PublisherFake()
 
-        val property = FloatProperty(id = "foo", name = "bar", parentPublisher = publisherMock.publisher, range = 10.0..15.0)
+        val property =
+            FloatProperty(id = "foo", name = "bar", parentPublisher = publisherMock.publisher, range = 10.0..15.0)
         property.publishConfig()
 
-        assertThat(publisherMock.messagePairs).containsAll(listOf(
+        assertThat(publisherMock.messagePairs).containsAll(
+            listOf(
                 Triple("foo" / "format".attr(), "10.0:15.0", true)
-        ))
+            )
+        )
 
         assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
             property.update(16.0)
         }
-
-
     }
-
 }
