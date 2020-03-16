@@ -7,7 +7,7 @@ utilizing [eclipse paho](https://www.eclipse.org/paho/) for MQTT communication.
 Create a Homie IoT property located at `/homie/hello-world/echo/text` with a value of "Hello, World!" and connect
 to an MQTT server based on environment variables.
 
-```
+```kotlin
 device(id = "hello-world") {
         node(id = "echo", type = "basic") {
             string(id = "text", value = "Hello, World!")
@@ -36,7 +36,7 @@ The following code is a complete example of using this library to publish and re
 music player using the the Homie IoT convention.  The Nuvo client library provides updates using an [rxBus implementation](https://android.jlelse.eu/rxbus-kotlin-listen-where-ever-you-want-e6fc0760a4a8)
 and is external to this example.
 
-```
+```kotlin
 import org.homieiot.PropertyType
 import org.homieiot.device
 import org.homieiot.mqtt.HomieMqttClient
